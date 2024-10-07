@@ -20,7 +20,7 @@ deploy:
     bundle_type: zip
     application: efederation
     deployment_group: EfederationDeploymentGroup
-    region: serverRegionHERE
+    region: us-east-2
     on: *2
     repo: TaylorJonesPersonal/Efederation-Service
     branch: main
