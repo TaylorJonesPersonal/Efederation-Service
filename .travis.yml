@@ -9,6 +9,7 @@ deploy:
     skip_cleanup: true
     on: &2
       repo: TaylorJonesPersonal/Efederation-Service
+      branch: main
     bucket: efederation-bucket
     region: us-east-2
   - provider: codedeploy
@@ -21,6 +22,8 @@ deploy:
     deployment_group: EfederationDeploymentGroup
     region: serverRegionHERE
     on: *2
+    repo: TaylorJonesPersonal/Efederation-Service
+    branch: main
 
 script:
   - zip -r latest *
