@@ -4,12 +4,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,15 +15,13 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl {
-    private static final String SECRET_KEY_PATH = "/Users/taylor/private.key";
+
+    @Value("${jwt.token.secret}") String authSecret;
+
     private Key getSignInKey() {
-        try {
-            byte[] keyBytes = Files.readAllBytes(Paths.get(SECRET_KEY_PATH));
-            return Keys.hmacShaKeyFor(keyBytes);
-        } catch(IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to read private key file", e);
-        }
+        System.out.println("THIS IS SECRET: " + authSecret);
+        byte[] keyBytes = authSecret.getBytes();
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     private Claims extractAllClaims(String token) {
