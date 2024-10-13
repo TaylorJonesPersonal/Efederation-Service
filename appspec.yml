@@ -20,11 +20,11 @@ hooks:
     - location: scripts/fix_privileges.sh
       timeout: 300
       runas: ec2-user
-  ApplicationStart:
-    - location: scripts/server_start.sh
-      timeout: 20
-      runas: ec2-user
   ApplicationStop:
     - location: scripts/server_stop.sh
+      timeout: 20
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/server_start.sh
       timeout: 20
       runas: ec2-user
