@@ -1,5 +1,6 @@
 package com.efederation.Service.impl;
 
+import com.efederation.Constants.CommonConstants;
 import com.efederation.Enums.Role;
 import com.efederation.Model.AuthenticationRequest;
 import com.efederation.Model.AuthenticationResponse;
@@ -22,7 +23,10 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl {
 
     @Autowired
-    private EmailService emailService;
+    EmailService emailService;
+
+    @Autowired
+    CommonConstants constants;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,7 +48,7 @@ public class AuthServiceImpl {
         }
         var jwtToken = jwtService.generateToken(user);
         try {
-            emailService.sendEmailVerification("jonesftwingp@outlook.com", "efedbiz@outlook.com");
+            emailService.sendEmailVerification(user.getEmail(), constants.getFromEmail());
         } catch(MessagingException e) {
             e.printStackTrace();
         }
@@ -61,7 +65,11 @@ public class AuthServiceImpl {
             throw new BadCredentialsException("Invalid Credentials");
         }
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return  AuthenticationResponse.builder().token(jwtToken).build();
+        if(user.isValidated()) {
+            var jwtToken = jwtService.generateToken(user);
+            return  AuthenticationResponse.builder().token(jwtToken).build();
+        } else {
+            throw new BadCredentialsException("User is not validated");
+        }
     }
 }
