@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmailServiceImpl implements EmailService {
     @Autowired
-    private JavaMailSender emailSender;
+    JavaMailSender emailSender;
 
     public void sendSimpleMessage(String to, String from, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -33,8 +33,9 @@ public class EmailServiceImpl implements EmailService {
                 "<title>email</title>\n" +
                 "</head> \n" +
                 "<body>\n" +
+                "<span>We are excited to have you join us. Please press " +
                 "<a href=\"http://ec2-3-144-245-126.us-east-2.compute.amazonaws.com:8080/api/v1/auth/validate/%s\">\n" +
-                "PRESS HERE TO VALIDATE!</a></body>\n" +
+                "here</a> to validate your email. After, head back to the app to login and begin your journey.</span></body>\n" +
                 "</html>";
         String htmlWithEmail = String.format(html, to);
         helper.setText(htmlWithEmail, true);
