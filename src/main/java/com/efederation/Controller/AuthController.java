@@ -3,6 +3,7 @@ package com.efederation.Controller;
 import com.efederation.Model.AuthenticationRequest;
 import com.efederation.Model.AuthenticationResponse;
 import com.efederation.Model.RegisterRequest;
+import com.efederation.Service.UserService;
 import com.efederation.Service.impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class AuthController {
     @Autowired
     AuthServiceImpl authService;
 
+    @Autowired
+    UserService userService;
+
     @ExceptionHandler({AuthenticationException.class})
     @ResponseBody
     public ResponseEntity<String> handleAuthenticationException(Exception e){
@@ -32,6 +36,12 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<String> validate(@RequestParam String email) {
+        userService.enableAccountByEmail(email);
+        return ResponseEntity.ok("Email validated");
     }
 
     @PostMapping("/login")

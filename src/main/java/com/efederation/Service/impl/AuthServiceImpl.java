@@ -6,7 +6,10 @@ import com.efederation.Model.AuthenticationResponse;
 import com.efederation.Model.RegisterRequest;
 import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
+import com.efederation.Service.EmailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl {
+
+    @Autowired
+    private EmailService emailService;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,6 +43,11 @@ public class AuthServiceImpl {
             userRepository.save(user);
         }
         var jwtToken = jwtService.generateToken(user);
+        try {
+            emailService.sendEmailVerification("jonesftwingp@outlook.com", "efedbiz@outlook.com");
+        } catch(MessagingException e) {
+            e.printStackTrace();
+        }
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
