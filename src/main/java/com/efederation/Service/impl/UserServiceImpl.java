@@ -25,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
     public void enableAccountByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-        userOptional.ifPresent(user -> user.setEnabled(true));
+        userOptional.ifPresent(user -> {
+            user.setEnabled(true); userRepository.save(user);
+        });
     }
 }
