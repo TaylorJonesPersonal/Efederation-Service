@@ -38,8 +38,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/validate")
-    public ResponseEntity<String> validate(@RequestParam String email) {
+    @GetMapping("/validate/{email}")
+    public ResponseEntity<String> validate(@PathVariable String email) {
         userService.enableAccountByEmail(email);
         return ResponseEntity.ok("Email validated");
     }

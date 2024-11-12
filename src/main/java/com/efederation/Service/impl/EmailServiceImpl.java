@@ -33,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
                 "<title>email</title>\n" +
                 "</head> \n" +
                 "<body>\n" +
-                "<a href=\"http://ec2-3-144-245-126.us-east-2.compute.amazonaws.com:8080/api/v1/auth/validate?email=%s\">\n" +
+                "<a href=\"http://ec2-3-144-245-126.us-east-2.compute.amazonaws.com:8080/api/v1/auth/validate/%s\">\n" +
                 "PRESS HERE TO VALIDATE!</a></body>\n" +
                 "</html>";
         String htmlWithEmail = String.format(html, to);
