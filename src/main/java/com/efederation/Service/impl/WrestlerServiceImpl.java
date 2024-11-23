@@ -22,7 +22,11 @@ public class WrestlerServiceImpl implements WrestlerService{
         List<Wrestler> userWrestlers = wrestlerRepository.findByUserId(user.getId());
         List<WrestlerResponse> wrestlerList = new ArrayList<>();
         userWrestlers.forEach(wrestler -> {
-            WrestlerResponse wrestlerResponse = new WrestlerResponse(wrestler.getWrestler_id(), wrestler.getAnnounceName(), wrestler.getWeapon(), wrestler.getFinishingMove());
+            WrestlerResponse wrestlerResponse = new WrestlerResponse(
+                    wrestler.getWrestler_id(),
+                    wrestler.getAnnounceName(),
+                    wrestler.getWeapon(),
+                    wrestler.getFinishingMove());
             wrestlerList.add(wrestlerResponse);
         });
         return wrestlerList;
