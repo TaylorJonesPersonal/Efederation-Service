@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WrestlerRequest {
+public class SubmitWrestlerRequest {
     private String announceName;
     private String weapon;
     private String finishingMove;

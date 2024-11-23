@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WrestlerResponse {
-    private long wrestlerId;
-    private String announceName;
-    private String weapon;
-    private String finishingMove;
+public class SubmitWrestlerResponse {
+    private String status;
+    private String wrestler;
 }
