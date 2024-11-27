@@ -26,8 +26,7 @@ public class WrestlerServiceImpl implements WrestlerService {
             WrestlerResponse wrestlerResponse = new WrestlerResponse(
                     wrestler.getWrestler_id(),
                     wrestler.getAnnounceName(),
-                    wrestler.getWrestlerAttributes().getWeapon(),
-                    wrestler.getWrestlerAttributes().getFinishingMove());
+                    wrestler.getWrestlerAttributes());
             wrestlerList.add(wrestlerResponse);
         });
         return wrestlerList;

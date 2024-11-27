@@ -1,5 +1,6 @@
 package com.efederation.DTO;
 
+import com.efederation.Model.WrestlerAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,5 @@ import lombok.NoArgsConstructor;
 public class WrestlerResponse {
     private long wrestlerId;
     private String announceName;
-    private String weapon;
-    private String finishingMove;
+    private WrestlerAttributes attributes;
 }
