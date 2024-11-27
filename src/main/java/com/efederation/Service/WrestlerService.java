@@ -1,4 +1,4 @@
-package com.efederation.Service.impl;
+package com.efederation.Service;
 
 import com.efederation.DTO.SubmitWrestlerRequest;
 import com.efederation.DTO.SubmitWrestlerResponse;
@@ -10,4 +10,6 @@ import java.util.List;
 public interface WrestlerService {
     List<WrestlerResponse> getWrestlers(User user);
     SubmitWrestlerResponse createWrestler(User user, SubmitWrestlerRequest request);
+
+    void updateWrestlerJsonAttributes(long wrestlerId);
 }

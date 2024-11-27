@@ -7,7 +7,7 @@ import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.impl.JwtServiceImpl;
-import com.efederation.Service.impl.WrestlerService;
+import com.efederation.Service.WrestlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +51,11 @@ public class WrestlerController {
                         HttpStatus.CREATED)
                 )
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateWrestler() {
+        wrestlerService.updateWrestlerJsonAttributes(1);
+        return ResponseEntity.ok().body("Wrestler updated!");
     }
 }

@@ -1,5 +1,6 @@
 package com.efederation.Model;
 
+import com.efederation.Converters.HashMapConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,6 @@ public class Wrestler {
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
-    private String weapon;
-    private String finishingMove;
+    @Convert(converter = HashMapConverter.class)
+    private WrestlerAttributes wrestlerAttributes;
 }
