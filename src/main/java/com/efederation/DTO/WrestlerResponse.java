@@ -14,4 +14,5 @@ public class WrestlerResponse {
     private long wrestlerId;
     private String announceName;
     private WrestlerAttributes attributes;
+    private String image;
 }

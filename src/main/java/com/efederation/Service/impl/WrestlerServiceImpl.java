@@ -30,7 +30,9 @@ public class WrestlerServiceImpl implements WrestlerService {
             WrestlerResponse wrestlerResponse = new WrestlerResponse(
                     wrestler.getWrestler_id(),
                     wrestler.getAnnounceName(),
-                    wrestler.getWrestlerAttributes());
+                    wrestler.getWrestlerAttributes(),
+                    getBase64Image(wrestler.getImageData())
+            );
             wrestlerList.add(wrestlerResponse);
         });
         return wrestlerList;
@@ -58,11 +60,8 @@ public class WrestlerServiceImpl implements WrestlerService {
         });
     }
 
-    public String getBase64Image(long wrestlerId) {
-        Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
-        Optional<String> base64EncodedString = wrestlerOptional.map(
-                wrestler -> Base64.getEncoder().encodeToString(wrestler.getImageData()));
-        return base64EncodedString.orElse("");
+    public String getBase64Image(byte[] imageData) {
+        return Base64.getEncoder().encodeToString(imageData);
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {

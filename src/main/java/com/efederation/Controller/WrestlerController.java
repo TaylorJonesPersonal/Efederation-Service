@@ -63,11 +63,6 @@ public class WrestlerController {
         return ResponseEntity.ok().body("Wrestler updated!");
     }
 
-    @GetMapping(value="/image/{wrestlerId}")
-    public ResponseEntity<String> getBase64IMage(@PathVariable long wrestlerId) {
-        return new ResponseEntity<>(wrestlerService.getBase64Image(wrestlerId), HttpStatus.OK);
-    }
-
     @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("wrestlerId") long id) throws IOException {
         wrestlerService.uploadImage(id, file);

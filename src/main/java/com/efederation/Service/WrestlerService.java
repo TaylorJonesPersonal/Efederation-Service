@@ -16,5 +16,4 @@ public interface WrestlerService {
     void updateWrestlerJsonAttributes(long wrestlerId);
 
     void uploadImage(long wrestlerId, MultipartFile file) throws IOException;
-    String getBase64Image(long wrestlerId);
 }
