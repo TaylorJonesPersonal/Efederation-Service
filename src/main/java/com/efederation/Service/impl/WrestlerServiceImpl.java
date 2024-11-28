@@ -8,6 +8,7 @@ import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.WrestlerService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ public class WrestlerServiceImpl implements WrestlerService {
     @Autowired
     WrestlerRepository wrestlerRepository;
 
+    @Transactional
     public List<WrestlerResponse> getWrestlers(User user) {
         List<Wrestler> userWrestlers = wrestlerRepository.findByUserId(user.getId());
         List<WrestlerResponse> wrestlerList = new ArrayList<>();
