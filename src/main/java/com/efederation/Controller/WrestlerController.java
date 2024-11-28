@@ -10,8 +10,12 @@ import com.efederation.Service.impl.JwtServiceImpl;
 import com.efederation.Service.WrestlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,5 +61,16 @@ public class WrestlerController {
     public ResponseEntity<String> updateWrestler() {
         wrestlerService.updateWrestlerJsonAttributes(1);
         return ResponseEntity.ok().body("Wrestler updated!");
+    }
+
+    @GetMapping(value="/image/{wrestlerId}")
+    public ResponseEntity<String> getBase64IMage(@PathVariable long wrestlerId) {
+        return new ResponseEntity<>(wrestlerService.getBase64Image(wrestlerId), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("wrestlerId") long id) throws IOException {
+        wrestlerService.uploadImage(id, file);
+        return ResponseEntity.ok().body("Image uploaded!");
     }
 }

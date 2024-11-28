@@ -25,6 +25,10 @@ public class Wrestler {
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
+    @Lob
+    @Column(name="imagedata", length = 1000)
+    private byte[] imageData;
+
     @Convert(converter = HashMapConverter.class)
     private WrestlerAttributes wrestlerAttributes;
 }
