@@ -1,10 +1,13 @@
 package com.efederation.Controller;
 
-import com.efederation.Model.AuthenticationRequest;
-import com.efederation.Model.AuthenticationResponse;
-import com.efederation.Model.RegisterRequest;
+import com.efederation.DTO.AuthenticationRequest;
+import com.efederation.DTO.AuthenticationResponse;
+import com.efederation.DTO.RefreshRequest;
+import com.efederation.DTO.RegisterRequest;
+import com.efederation.Model.User;
 import com.efederation.Service.UserService;
 import com.efederation.Service.impl.AuthServiceImpl;
+import com.efederation.Service.impl.JwtServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     @Autowired
     AuthServiceImpl authService;
+
+    @Autowired
+    JwtServiceImpl jwtService;
 
     @Autowired
     UserService userService;
@@ -42,6 +48,15 @@ public class AuthController {
     public ResponseEntity<String> validate(@PathVariable String email) {
         userService.enableAccountByEmail(email);
         return ResponseEntity.ok("Email validated");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) {
+        User validatedUser = authService.validateRefreshTokenGetUser(request.getRefreshToken());
+        AuthenticationResponse response = new AuthenticationResponse();
+        response.setRefreshToken(request.getRefreshToken());
+        response.setToken(jwtService.generateToken(validatedUser));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")

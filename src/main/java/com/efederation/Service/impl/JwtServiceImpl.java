@@ -19,7 +19,6 @@ public class JwtServiceImpl {
     @Value("${jwt.token.secret}") String authSecret;
 
     private Key getSignInKey() {
-        System.out.println("THIS IS SECRET: " + authSecret);
         byte[] keyBytes = authSecret.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
