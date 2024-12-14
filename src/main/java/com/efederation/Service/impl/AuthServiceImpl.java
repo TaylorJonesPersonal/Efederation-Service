@@ -57,7 +57,7 @@ public class AuthServiceImpl {
 
 
     public User validateRefreshTokenGetUser(String refreshToken) {
-        RefreshToken locatedToken = refreshTokenRepository.findByTokenAndExpirationTimeAfter(refreshToken, OffsetDateTime.now());
+        RefreshToken locatedToken = refreshTokenRepository.findByToken(refreshToken);
         return locatedToken.getUser();
     }
 
