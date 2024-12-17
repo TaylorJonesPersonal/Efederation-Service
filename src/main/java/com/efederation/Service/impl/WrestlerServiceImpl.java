@@ -3,6 +3,7 @@ package com.efederation.Service.impl;
 import com.efederation.DTO.SubmitWrestlerRequest;
 import com.efederation.DTO.SubmitWrestlerResponse;
 import com.efederation.DTO.WrestlerResponse;
+import com.efederation.Enums.GenderIdentity;
 import com.efederation.Model.User;
 import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
@@ -42,6 +43,9 @@ public class WrestlerServiceImpl implements WrestlerService {
         Wrestler newWrestler = Wrestler.builder()
                 .user(user)
                 .announceName(request.getAnnounceName())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .wrestlerAttributes(new WrestlerAttributes(request.getGenderIdentity()))
                 .build();
         wrestlerRepository.save(newWrestler);
         return new SubmitWrestlerResponse("Successful", newWrestler.getAnnounceName());
@@ -61,13 +65,16 @@ public class WrestlerServiceImpl implements WrestlerService {
     }
 
     public String getBase64Image(byte[] imageData) {
-        return Base64.getEncoder().encodeToString(imageData);
+        if(imageData != null) {
+            return Base64.getEncoder().encodeToString(imageData);
+        }
+        return "";
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {
         Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
         wrestlerOptional.map(wrestler -> {
-            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch"));
+            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY));
             wrestlerRepository.save(wrestler);
             return wrestler;
         }

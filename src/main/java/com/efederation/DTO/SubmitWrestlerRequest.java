@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SubmitWrestlerRequest {
     private String announceName;
+    private String firstName;
+    private String lastName;
+    private String genderIdentity;
     private String weapon;
     private String finishingMove;
 }

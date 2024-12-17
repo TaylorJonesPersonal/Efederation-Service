@@ -20,6 +20,8 @@ public class Wrestler {
     private long wrestler_id;
 
     private String announceName;
+    private String firstName;
+    private String lastName;
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false)
