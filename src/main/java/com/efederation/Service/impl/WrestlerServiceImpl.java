@@ -45,7 +45,10 @@ public class WrestlerServiceImpl implements WrestlerService {
                 .announceName(request.getAnnounceName())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .wrestlerAttributes(new WrestlerAttributes(request.getGenderIdentity()))
+                .wrestlerAttributes(new WrestlerAttributes(
+                        request.getWeapon(),
+                        request.getFinishingMove(),
+                        GenderIdentity.valueOf(request.getGenderIdentity())))
                 .build();
         wrestlerRepository.save(newWrestler);
         return new SubmitWrestlerResponse("Successful", newWrestler.getAnnounceName());
