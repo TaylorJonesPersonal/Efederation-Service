@@ -1,6 +1,8 @@
 language: java
 jdk:
   - openjdk17
+node_js:
+  - "lts/*"
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
