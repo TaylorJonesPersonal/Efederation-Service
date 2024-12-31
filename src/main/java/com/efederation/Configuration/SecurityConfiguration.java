@@ -28,7 +28,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/npc/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e-> e.accessDeniedHandler(customAccessDeniedHandler)

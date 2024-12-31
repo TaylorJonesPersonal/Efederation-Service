@@ -1,7 +1,7 @@
 package com.efederation.Service.impl;
 
-import com.efederation.DTO.SubmitWrestlerRequest;
-import com.efederation.DTO.SubmitWrestlerResponse;
+import com.efederation.DTO.SubmitCharacterRequest;
+import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerResponse;
 import com.efederation.Enums.GenderIdentity;
 import com.efederation.Model.User;
@@ -9,6 +9,7 @@ import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.WrestlerService;
+import com.efederation.Utils.CommonUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +33,14 @@ public class WrestlerServiceImpl implements WrestlerService {
                     wrestler.getWrestler_id(),
                     wrestler.getAnnounceName(),
                     wrestler.getWrestlerAttributes(),
-                    getBase64Image(wrestler.getImageData())
+                    CommonUtils.getBase64Image(wrestler.getImageData())
             );
             wrestlerList.add(wrestlerResponse);
         });
         return wrestlerList;
     }
 
-    public SubmitWrestlerResponse createWrestler(User user, SubmitWrestlerRequest request) {
+    public SubmitCharacterResponse createWrestler(User user, SubmitCharacterRequest request) {
         Wrestler newWrestler = Wrestler.builder()
                 .user(user)
                 .announceName(request.getAnnounceName())
@@ -51,7 +52,7 @@ public class WrestlerServiceImpl implements WrestlerService {
                         GenderIdentity.valueOf(request.getGenderIdentity())))
                 .build();
         wrestlerRepository.save(newWrestler);
-        return new SubmitWrestlerResponse("Successful", newWrestler.getAnnounceName());
+        return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName());
     }
 
     public void uploadImage(long wrestlerId,MultipartFile file) {
@@ -65,13 +66,6 @@ public class WrestlerServiceImpl implements WrestlerService {
             }
             return wrestler;
         });
-    }
-
-    public String getBase64Image(byte[] imageData) {
-        if(imageData != null) {
-            return Base64.getEncoder().encodeToString(imageData);
-        }
-        return "";
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {
