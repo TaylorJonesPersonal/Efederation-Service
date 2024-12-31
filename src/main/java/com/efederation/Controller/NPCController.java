@@ -37,7 +37,7 @@ public class NPCController {
     }
 
     @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("wrestlerId") long id) {
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("npcId") long id) {
         npcService.uploadImage(id, file);
         return ResponseEntity.ok().body("Image uploaded!");
     }

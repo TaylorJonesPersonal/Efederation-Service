@@ -28,7 +28,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/npc/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/api/v1/npc/create",
+                                "/api/v1/npc/update",
+                                "/api/v1/npc/image/create"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e-> e.accessDeniedHandler(customAccessDeniedHandler)
