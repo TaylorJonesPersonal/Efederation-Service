@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class NPCResponse {
-    private long npcId;
+    private long wrestlerId;
     private String announceName;
     private WrestlerAttributes attributes;
     private String image;

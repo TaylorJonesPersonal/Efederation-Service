@@ -29,7 +29,7 @@ public class NPCServiceImpl implements NPCService {
         List<NPCResponse> npcList = new ArrayList<>();
         npcListRepository.forEach(npc -> {
             NPCResponse npcResponse = NPCResponse.builder()
-                    .npcId(npc.getNpc_id())
+                    .wrestlerId(npc.getNpc_id())
                     .image(CommonUtils.getBase64Image(npc.getImageData()))
                     .attributes(npc.getWrestlerAttributes())
                     .announceName(npc.getAnnounceName())
