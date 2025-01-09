@@ -1,16 +1,15 @@
 package com.efederation.Model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.OffsetDateTime;
 
-@Data
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class RefreshToken {
 
     @Id
@@ -26,6 +25,8 @@ public class RefreshToken {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id", referencedColumnName = "id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
 
 }

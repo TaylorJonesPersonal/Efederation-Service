@@ -7,4 +7,5 @@ import org.springframework.stereotype.Component;
 @Data
 public class CommonConstants {
     private final String fromEmail = "efedbusiness@gmail.com";
+    private final String npcDenotation = "n";
 }

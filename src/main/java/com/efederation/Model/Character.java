@@ -1,11 +1,10 @@
 package com.efederation.Model;
 
 import com.efederation.Converters.HashMapConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Lob;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Random;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +22,10 @@ public abstract class Character {
     @Lob
     @Column(name="imagedata", length = 1000)
     private byte[] imageData;
+
+    public Integer fight() {
+        Random random = new Random();
+        return random.nextInt(20);
+    }
+
 }
