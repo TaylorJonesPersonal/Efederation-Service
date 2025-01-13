@@ -47,6 +47,7 @@ public class AuthServiceImpl {
 
     public RefreshToken generateRefreshToken(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
+        refreshTokenRepository.deleteById(user.getRefreshToken().getId());
         String newToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(newToken);
@@ -55,7 +56,6 @@ public class AuthServiceImpl {
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
-
 
     public User validateRefreshTokenGetUser(String refreshToken) throws RefreshTokenExpiredException {
         RefreshToken locatedToken = refreshTokenRepository.findByToken(refreshToken);
