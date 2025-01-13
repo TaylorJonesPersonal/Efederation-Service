@@ -19,6 +19,8 @@ public class Wrestler extends Character {
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
 
     @ManyToMany
