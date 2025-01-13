@@ -2,7 +2,8 @@ package com.efederation.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.hibernate.annotations.CreationTimestamp;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -22,6 +23,9 @@ public class NPC extends Character{
             inverseJoinColumns = @JoinColumn(name="match_id")
     )
     private Set<Match> matches;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     @Builder
     public NPC(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, byte[] imageData) {

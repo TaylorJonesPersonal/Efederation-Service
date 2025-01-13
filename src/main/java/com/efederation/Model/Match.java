@@ -2,7 +2,8 @@ package com.efederation.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.hibernate.annotations.CreationTimestamp;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -24,5 +25,8 @@ public class Match {
     private Set<NPC> npc_participants;
 
     private String winner;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
 
 }

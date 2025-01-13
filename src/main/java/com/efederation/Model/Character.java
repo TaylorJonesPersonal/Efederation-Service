@@ -3,7 +3,6 @@ package com.efederation.Model;
 import com.efederation.Converters.HashMapConverter;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Random;
 
 @Data

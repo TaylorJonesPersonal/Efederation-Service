@@ -45,7 +45,7 @@ public class AuthServiceImpl {
     private final JwtServiceImpl jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public String generateRefreshToken(String email) {
+    public RefreshToken generateRefreshToken(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         String newToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
@@ -53,7 +53,7 @@ public class AuthServiceImpl {
         refreshToken.setExpirationTime(OffsetDateTime.now().plus(REFRESH_TOKEN_VALIDITY));
         refreshToken.setUser(user);
         refreshTokenRepository.save(refreshToken);
-        return newToken;
+        return refreshToken;
     }
 
 
@@ -89,7 +89,7 @@ public class AuthServiceImpl {
         } catch(MessagingException e) {
             e.printStackTrace();
         }
-        return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken.getToken()).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -104,8 +104,8 @@ public class AuthServiceImpl {
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         if(user.isValidated()) {
             var jwtToken = jwtService.generateToken(user);
-            var refreshToken = user.getRefreshToken();
-            return  AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken.getToken()).build();
+            var refreshToken = generateRefreshToken(user.getEmail());
+            return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken.getToken()).build();
         } else {
             throw new BadCredentialsException("User is not validated");
         }
