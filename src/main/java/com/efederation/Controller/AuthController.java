@@ -4,16 +4,20 @@ import com.efederation.DTO.AuthenticationRequest;
 import com.efederation.DTO.AuthenticationResponse;
 import com.efederation.DTO.RefreshRequest;
 import com.efederation.DTO.RegisterRequest;
+import com.efederation.Exception.ApiError;
+import com.efederation.Exception.RefreshTokenExpiredException;
 import com.efederation.Model.User;
 import com.efederation.Service.UserService;
 import com.efederation.Service.impl.AuthServiceImpl;
 import com.efederation.Service.impl.JwtServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -34,6 +38,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
 
+    @ExceptionHandler({RefreshTokenExpiredException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleRefreshTokenExpired(
+            RefreshTokenExpiredException ex,
+            WebRequest webRequest) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "An error occurred.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("{\"status\": \"UP\"}");
@@ -51,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) {
+    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) throws RefreshTokenExpiredException {
         User validatedUser = authService.validateRefreshTokenGetUser(request.getRefreshToken());
         AuthenticationResponse response = new AuthenticationResponse();
         response.setRefreshToken(request.getRefreshToken());

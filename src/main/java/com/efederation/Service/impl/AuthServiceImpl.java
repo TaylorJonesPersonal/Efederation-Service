@@ -5,6 +5,7 @@ import com.efederation.Enums.Role;
 import com.efederation.DTO.AuthenticationRequest;
 import com.efederation.DTO.AuthenticationResponse;
 import com.efederation.DTO.RegisterRequest;
+import com.efederation.Exception.RefreshTokenExpiredException;
 import com.efederation.Model.RefreshToken;
 import com.efederation.Model.User;
 import com.efederation.Repository.RefreshTokenRepository;
@@ -56,9 +57,16 @@ public class AuthServiceImpl {
     }
 
 
-    public User validateRefreshTokenGetUser(String refreshToken) {
+    public User validateRefreshTokenGetUser(String refreshToken) throws RefreshTokenExpiredException {
         RefreshToken locatedToken = refreshTokenRepository.findByToken(refreshToken);
+        if(dateTimeExpired(locatedToken.getExpirationTime())) {
+            throw new RefreshTokenExpiredException("Refresh Token has expired. User should be reauthenticated.");
+        }
         return locatedToken.getUser();
+    }
+
+    public boolean dateTimeExpired(OffsetDateTime dateTime) {
+        return dateTime.isBefore(OffsetDateTime.now());
     }
 
     public AuthenticationResponse register(RegisterRequest request) {
