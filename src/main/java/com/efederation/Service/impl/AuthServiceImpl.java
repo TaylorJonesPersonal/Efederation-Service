@@ -47,7 +47,9 @@ public class AuthServiceImpl {
 
     public RefreshToken generateRefreshToken(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
-        refreshTokenRepository.deleteById(user.getRefreshToken().getId());
+        if(user.getRefreshToken() != null) {
+            refreshTokenRepository.deleteById(user.getRefreshToken().getId());
+        }
         String newToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(newToken);
