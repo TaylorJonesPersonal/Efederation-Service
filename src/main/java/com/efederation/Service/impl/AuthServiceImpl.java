@@ -48,7 +48,7 @@ public class AuthServiceImpl {
     public RefreshToken generateRefreshToken(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         if(user.getRefreshToken() != null) {
-            refreshTokenRepository.deleteById(user.getRefreshToken().getId());
+            refreshTokenRepository.deleteByTokenValue(user.getRefreshToken().getToken());
         }
         String newToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
@@ -85,13 +85,12 @@ public class AuthServiceImpl {
             userRepository.save(user);
         }
         var jwtToken = jwtService.generateToken(user);
-        var refreshToken = generateRefreshToken(user.getEmail());
         try {
             emailService.sendEmailVerification(user.getEmail(), constants.getFromEmail());
         } catch(MessagingException e) {
             e.printStackTrace();
         }
-        return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken.getToken()).build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
