@@ -23,7 +23,7 @@ public class RefreshToken {
     @Column(nullable = false)
     private OffsetDateTime expirationTime;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

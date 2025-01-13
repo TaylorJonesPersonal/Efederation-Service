@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Exclude
     private Set<Wrestler> wrestlers;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private RefreshToken refreshToken;
 
     @Override
