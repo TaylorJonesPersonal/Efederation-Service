@@ -23,8 +23,8 @@ public abstract class Character {
     private byte[] imageData;
 
     public Integer fight() {
-        Random random = new Random();
-        return random.nextInt(20);
+        Random roll = new Random();
+        return this.wrestlerAttributes.getSpeed() + this.wrestlerAttributes.getStrength() + roll.nextInt(20);
     }
 
 }
