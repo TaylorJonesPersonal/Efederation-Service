@@ -15,4 +15,5 @@ public class WrestlerResponse {
     private String announceName;
     private WrestlerAttributes attributes;
     private String image;
+    private String weightClass;
 }

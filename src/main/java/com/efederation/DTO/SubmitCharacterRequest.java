@@ -16,4 +16,5 @@ public class SubmitCharacterRequest {
     private String genderIdentity;
     private String weapon;
     private String finishingMove;
+    private float weight;
 }

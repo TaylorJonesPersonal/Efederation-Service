@@ -24,15 +24,19 @@ public class NPCServiceImpl implements NPCService {
     @Autowired
     NPCRepository npcRepository;
 
+    @Autowired
+    CommonUtils commonUtils;
+
     public List<NPCResponse> getNPCs() {
         List<NPC> npcListRepository = npcRepository.findAll();
         List<NPCResponse> npcList = new ArrayList<>();
         npcListRepository.forEach(npc -> {
             NPCResponse npcResponse = NPCResponse.builder()
                     .wrestlerId(npc.getNpc_id())
-                    .image(CommonUtils.getBase64Image(npc.getImageData()))
+                    .image(commonUtils.getBase64Image(npc.getImageData()))
                     .attributes(npc.getWrestlerAttributes())
                     .announceName(npc.getAnnounceName())
+                    .weightClass(commonUtils.deriveWeightClassFromWeight(npc.getWrestlerAttributes().getWeight()).toString())
                     .build();
             npcList.add(npcResponse);
         });
@@ -44,7 +48,7 @@ public class NPCServiceImpl implements NPCService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .announceName(request.getAnnounceName())
-                .wrestlerAttributes(new WrestlerAttributes(request.getWeapon(), request.getFinishingMove(), GenderIdentity.valueOf(request.getGenderIdentity())))
+                .wrestlerAttributes(new WrestlerAttributes(request.getWeapon(), request.getFinishingMove(), GenderIdentity.valueOf(request.getGenderIdentity()), request.getWeight()))
                 .build();
         npcRepository.save(newNpc);
         return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName());
@@ -53,7 +57,7 @@ public class NPCServiceImpl implements NPCService {
     public void updateNPCJsonAttributes(long npcId) {
         Optional<NPC> optionalNPC = npcRepository.findById(npcId);
         optionalNPC.map(npc -> {
-            npc.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY));
+            npc.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 220.00));
             npcRepository.save(npc);
             return npc;
         });

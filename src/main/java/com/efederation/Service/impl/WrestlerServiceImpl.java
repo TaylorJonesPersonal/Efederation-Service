@@ -24,6 +24,9 @@ public class WrestlerServiceImpl implements WrestlerService {
     @Autowired
     WrestlerRepository wrestlerRepository;
 
+    @Autowired
+    CommonUtils commonUtils;
+
     @Transactional
     public List<WrestlerResponse> getWrestlers(User user) {
         List<Wrestler> userWrestlers = wrestlerRepository.findByUserId(user.getId());
@@ -33,7 +36,8 @@ public class WrestlerServiceImpl implements WrestlerService {
                     wrestler.getWrestler_id(),
                     wrestler.getAnnounceName(),
                     wrestler.getWrestlerAttributes(),
-                    CommonUtils.getBase64Image(wrestler.getImageData())
+                    commonUtils.getBase64Image(wrestler.getImageData()),
+                    commonUtils.deriveWeightClassFromWeight(wrestler.getWrestlerAttributes().getWeight()).toString()
             );
             wrestlerList.add(wrestlerResponse);
         });
@@ -49,8 +53,10 @@ public class WrestlerServiceImpl implements WrestlerService {
                 .wrestlerAttributes(new WrestlerAttributes(
                         request.getWeapon(),
                         request.getFinishingMove(),
-                        GenderIdentity.valueOf(request.getGenderIdentity())))
-                .build();
+                        GenderIdentity.valueOf(request.getGenderIdentity()),
+                        request.getWeight()
+                        )
+                ).build();
         wrestlerRepository.save(newWrestler);
         return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName());
     }
@@ -71,7 +77,7 @@ public class WrestlerServiceImpl implements WrestlerService {
     public void updateWrestlerJsonAttributes(long wrestlerId) {
         Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
         wrestlerOptional.map(wrestler -> {
-            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY));
+            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 210.00));
             wrestlerRepository.save(wrestler);
             return wrestler;
         }
