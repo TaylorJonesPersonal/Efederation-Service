@@ -16,18 +16,11 @@ public class WrestlerAttributes {
     private GenderIdentity genderIdentity;
     private double weight;
 
-    @Min(1)
-    @Max(99)
+    @Min(0)
+    @Max(10)
     private int strength = 0;
 
-    @Min(1)
-    @Max(99)
+    @Min(0)
+    @Max(10)
     private int speed = 0;
-
-    public WrestlerAttributes(String weapon, String finishingMove, GenderIdentity genderIdentity, double weight) {
-        this.weapon = weapon;
-        this.finishingMove = finishingMove;
-        this.genderIdentity = genderIdentity;
-        this.weight = weight;
-    }
 }

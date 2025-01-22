@@ -48,7 +48,14 @@ public class NPCServiceImpl implements NPCService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .announceName(request.getAnnounceName())
-                .wrestlerAttributes(new WrestlerAttributes(request.getWeapon(), request.getFinishingMove(), GenderIdentity.valueOf(request.getGenderIdentity()), request.getWeight()))
+                .wrestlerAttributes(new WrestlerAttributes(
+                        request.getWeapon(),
+                        request.getFinishingMove(),
+                        GenderIdentity.valueOf(request.getGenderIdentity()),
+                        request.getWeight(),
+                        request.getAttributes().getStrength(),
+                        request.getAttributes().getSpeed()
+                ))
                 .build();
         npcRepository.save(newNpc);
         return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName());
@@ -57,7 +64,7 @@ public class NPCServiceImpl implements NPCService {
     public void updateNPCJsonAttributes(long npcId) {
         Optional<NPC> optionalNPC = npcRepository.findById(npcId);
         optionalNPC.map(npc -> {
-            npc.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 220.00));
+            npc.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 220.00, 0, 0));
             npcRepository.save(npc);
             return npc;
         });

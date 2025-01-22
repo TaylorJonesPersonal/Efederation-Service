@@ -54,7 +54,9 @@ public class WrestlerServiceImpl implements WrestlerService {
                         request.getWeapon(),
                         request.getFinishingMove(),
                         GenderIdentity.valueOf(request.getGenderIdentity()),
-                        request.getWeight()
+                        request.getWeight(),
+                        request.getAttributes().getStrength(),
+                        request.getAttributes().getSpeed()
                         )
                 ).build();
         wrestlerRepository.save(newWrestler);
@@ -77,7 +79,7 @@ public class WrestlerServiceImpl implements WrestlerService {
     public void updateWrestlerJsonAttributes(long wrestlerId) {
         Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
         wrestlerOptional.map(wrestler -> {
-            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 210.00));
+            wrestler.setWrestlerAttributes(new WrestlerAttributes("Hammer", "Punch", GenderIdentity.NONBINARY, 210.00, 0, 0));
             wrestlerRepository.save(wrestler);
             return wrestler;
         }
