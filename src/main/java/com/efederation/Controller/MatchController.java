@@ -45,7 +45,7 @@ public class MatchController {
                 Optional<NPC> npcOptional = npcRepository.findById(Long.parseLong(participant_id.substring(1)));
                 npcOptional.ifPresent(npcSet::add);
             } else {
-                Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(1L);
+                Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(Long.parseLong(participant_id));
                 wrestlerOptional.ifPresent(wrestlerSet::add);
             }
         }
