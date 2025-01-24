@@ -3,7 +3,7 @@ package com.efederation.Controller;
 import com.efederation.Constants.CommonConstants;
 import com.efederation.DTO.CreateMatchRequest;
 import com.efederation.DTO.CreateMatchResponse;
-import com.efederation.DTO.MatchResponse;
+import com.efederation.DTO.MatchAttributes;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
 import com.efederation.Model.NPC;
@@ -35,8 +35,8 @@ public class MatchController {
     CommonConstants commonConstants;
 
     @GetMapping("/{wrestlerId}")
-    public ResponseEntity<MatchResponse> getMatches(@PathVariable int wrestlerId) {
-        MatchResponse matchResponse = matchService.getMatches(wrestlerId);
+    public ResponseEntity<List<MatchAttributes>> getMatches(@PathVariable int wrestlerId) {
+        List<MatchAttributes> matchResponse = matchService.getMatches(wrestlerId);
         return new ResponseEntity<>(matchResponse, HttpStatus.OK);
     }
 

@@ -1,7 +1,6 @@
 package com.efederation.Service.impl;
 
 import com.efederation.DTO.MatchAttributes;
-import com.efederation.DTO.MatchResponse;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
 import com.efederation.Model.NPC;
@@ -35,7 +34,7 @@ public class MatchServiceImpl implements MatchService {
         matchRepository.save(newMatch);
     }
 
-    public MatchResponse getMatches (int wrestlerId) {
+    public List<MatchAttributes> getMatches (int wrestlerId) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         List<Map<String, Object>> matches = matchRepository.getMatchesByWrestlerId(wrestlerId);
@@ -50,7 +49,7 @@ public class MatchServiceImpl implements MatchService {
             MatchAttributes matchAttributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
             matchAttributeList.add(matchAttributes);
         });
-        return MatchResponse.builder().matches(matchAttributeList).build();
+        return matchAttributeList;
     }
 
     public Character defineWinner(List<Character> characters) {
