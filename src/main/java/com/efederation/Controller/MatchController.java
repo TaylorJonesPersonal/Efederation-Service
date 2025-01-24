@@ -3,6 +3,7 @@ package com.efederation.Controller;
 import com.efederation.Constants.CommonConstants;
 import com.efederation.DTO.CreateMatchRequest;
 import com.efederation.DTO.CreateMatchResponse;
+import com.efederation.DTO.MatchResponse;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
 import com.efederation.Model.NPC;
@@ -13,10 +14,7 @@ import com.efederation.Service.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -35,6 +33,12 @@ public class MatchController {
 
     @Autowired
     CommonConstants commonConstants;
+
+    @GetMapping("/{wrestlerId}")
+    public ResponseEntity<MatchResponse> getMatches(@PathVariable int wrestlerId) {
+        MatchResponse matchResponse = matchService.getMatches(wrestlerId);
+        return new ResponseEntity<>(matchResponse, HttpStatus.OK);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<CreateMatchResponse> createMatch(@RequestBody CreateMatchRequest matchRequest) {
