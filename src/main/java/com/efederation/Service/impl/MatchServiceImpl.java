@@ -50,7 +50,7 @@ public class MatchServiceImpl implements MatchService {
             MatchAttributes matchAttributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
             matchAttributeList.add(matchAttributes);
         });
-        return MatchResponse.builder().wrestlerId(wrestlerId).matches(matchAttributeList).build();
+        return MatchResponse.builder().matches(matchAttributeList).build();
     }
 
     public Character defineWinner(List<Character> characters) {
