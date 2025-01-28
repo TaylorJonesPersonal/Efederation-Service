@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Component
@@ -32,5 +33,9 @@ public class CommonUtils {
         } else {
             return WeightClass.SUPER_HEAVYWEIGHT;
         }
+    }
+
+    public LocalDateTime convertTimestampWithoutExplicitT(String timestamp) {
+        return LocalDateTime.parse(timestamp.replace(" ", "T"));
     }
 }

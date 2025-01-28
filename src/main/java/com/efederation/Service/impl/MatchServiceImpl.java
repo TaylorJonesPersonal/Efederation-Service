@@ -1,6 +1,6 @@
 package com.efederation.Service.impl;
 
-import com.efederation.DTO.MatchAttributes;
+import com.efederation.DTO.MatchAttributesResponse;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
 import com.efederation.Model.NPC;
@@ -9,12 +9,14 @@ import com.efederation.Repository.MatchRepository;
 import com.efederation.Repository.NPCRepository;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.MatchService;
-import com.fasterxml.jackson.core.JsonParser;
+import com.efederation.Utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -29,16 +31,19 @@ public class MatchServiceImpl implements MatchService {
     @Autowired
     WrestlerRepository wrestlerRepository;
 
+    @Autowired
+    CommonUtils commonUtils;
+
     @Transactional
     public void createMatch(Match newMatch) {
         matchRepository.save(newMatch);
     }
 
-    public List<MatchAttributes> getMatches (int wrestlerId) {
+    public List<MatchAttributesResponse> getMatches (int wrestlerId) {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<Map<String, Object>> matches = matchRepository.getMatchesByWrestlerId(wrestlerId);
-        List<MatchAttributes> matchAttributeList = new ArrayList<>();
+        List<MatchAttributesResponse> matchAttributeList = new ArrayList<>();
         matches.forEach(match -> {
             Map<String, Object> modifiableMap = new HashMap<>(match);
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
@@ -46,8 +51,11 @@ public class MatchServiceImpl implements MatchService {
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
             optionalWrestler.ifPresent(wrestler -> modifiableMap.put("wrestlerName", wrestler.getAnnounceName()));
             modifiableMap.remove("npc_participants_npc_id");
-            MatchAttributes matchAttributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
-            matchAttributeList.add(matchAttributes);
+            LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
+            String dateOnly = timestamp.format(formatter);
+            modifiableMap.put("created_at", dateOnly);
+            MatchAttributesResponse MatchAttributesResponse = objectMapper.convertValue(modifiableMap, MatchAttributesResponse.class);
+            matchAttributeList.add(MatchAttributesResponse);
         });
         return matchAttributeList;
     }
