@@ -11,6 +11,7 @@ import com.efederation.Repository.NPCRepository;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.MatchService;
 import com.efederation.Utils.CommonUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +43,16 @@ public class MatchServiceImpl implements MatchService {
 
     public List<MatchAttributesResponse> getMatches (int wrestlerId) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<Map<String, Object>> matches = matchRepository.getMatchesByWrestlerId(wrestlerId);
         List<MatchAttributesResponse> matchAttributeList = new ArrayList<>();
         matches.forEach(match -> {
             Map<String, Object> modifiableMap = new HashMap<>(match);
-            modifiableMap.remove("match_id");
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
             String participants = "%s vs. %s";
             optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()))));
-            modifiableMap.remove("npc_participants_npc_id");
             LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
             String dateOnly = timestamp.format(formatter);
             modifiableMap.put("created_at", dateOnly);
