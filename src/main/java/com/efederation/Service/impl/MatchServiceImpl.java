@@ -49,9 +49,9 @@ public class MatchServiceImpl implements MatchService {
             Map<String, Object> modifiableMap = new HashMap<>(match);
             modifiableMap.remove("match_id");
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
-            optionalNPC.ifPresent(npc -> modifiableMap.put("npcName", npc.getAnnounceName()));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
-            optionalWrestler.ifPresent(wrestler -> modifiableMap.put("wrestlerName", wrestler.getAnnounceName()));
+            String participants = "%s vs. %s";
+            optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()))));
             modifiableMap.remove("npc_participants_npc_id");
             LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
             String dateOnly = timestamp.format(formatter);
