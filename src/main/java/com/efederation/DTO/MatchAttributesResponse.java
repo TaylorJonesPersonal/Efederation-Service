@@ -1,11 +1,13 @@
 package com.efederation.DTO;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MatchAttributesResponse {
-    private String wrestlerName;
-    private String npcName;
-    private String winner;
-    private String created_at;
+    private long match_id;
+    private MatchAttributes matchAttributes;
 }
+

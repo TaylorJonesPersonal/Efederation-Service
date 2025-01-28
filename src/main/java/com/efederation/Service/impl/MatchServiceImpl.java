@@ -1,5 +1,6 @@
 package com.efederation.Service.impl;
 
+import com.efederation.DTO.MatchAttributes;
 import com.efederation.DTO.MatchAttributesResponse;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
@@ -46,6 +47,7 @@ public class MatchServiceImpl implements MatchService {
         List<MatchAttributesResponse> matchAttributeList = new ArrayList<>();
         matches.forEach(match -> {
             Map<String, Object> modifiableMap = new HashMap<>(match);
+            modifiableMap.remove("match_id");
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
             optionalNPC.ifPresent(npc -> modifiableMap.put("npcName", npc.getAnnounceName()));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
@@ -54,8 +56,9 @@ public class MatchServiceImpl implements MatchService {
             LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
             String dateOnly = timestamp.format(formatter);
             modifiableMap.put("created_at", dateOnly);
-            MatchAttributesResponse MatchAttributesResponse = objectMapper.convertValue(modifiableMap, MatchAttributesResponse.class);
-            matchAttributeList.add(MatchAttributesResponse);
+            MatchAttributes attributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
+            MatchAttributesResponse matchAttributesResponse = new MatchAttributesResponse(Long.parseLong(match.get("match_id").toString()), attributes);
+            matchAttributeList.add(matchAttributesResponse);
         });
         return matchAttributeList;
     }
