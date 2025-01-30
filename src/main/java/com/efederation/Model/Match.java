@@ -26,6 +26,8 @@ public class Match {
 
     private String winner;
 
+    private String condition;
+
     @CreationTimestamp
     private Timestamp createdAt;
 

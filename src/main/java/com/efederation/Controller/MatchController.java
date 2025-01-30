@@ -56,7 +56,12 @@ public class MatchController {
         List<Character> combinedArray = new ArrayList<>(wrestlerSet);
         combinedArray.addAll(npcSet);
         Character winner = matchService.defineWinner(combinedArray);
-        Match newMatch = Match.builder().human_participants(wrestlerSet).npc_participants(npcSet).winner(winner.getAnnounceName()).build();
+        Match newMatch = Match.builder()
+                .human_participants(wrestlerSet)
+                .npc_participants(npcSet)
+                .winner(winner.getAnnounceName())
+                .condition(matchService.defineCondition())
+                .build();
         matchService.createMatch(newMatch);
         CreateMatchResponse matchResponse = CreateMatchResponse.builder().winnerName(winner.getAnnounceName()).build();
         return new ResponseEntity<>(matchResponse, HttpStatus.OK);

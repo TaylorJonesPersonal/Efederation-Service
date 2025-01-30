@@ -12,4 +12,6 @@ public interface MatchService {
     void createMatch(Match newMatch);
 
     Character defineWinner(List<Character> characters);
+
+    String defineCondition();
 }

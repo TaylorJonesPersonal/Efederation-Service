@@ -2,6 +2,7 @@ package com.efederation.Service.impl;
 
 import com.efederation.DTO.MatchAttributes;
 import com.efederation.DTO.MatchAttributesResponse;
+import com.efederation.Enums.WinCondition;
 import com.efederation.Model.Character;
 import com.efederation.Model.Match;
 import com.efederation.Model.NPC;
@@ -65,5 +66,16 @@ public class MatchServiceImpl implements MatchService {
 
     public Character defineWinner(List<Character> characters) {
         return characters.stream().max(Comparator.comparingInt(Character::fight)).orElse(characters.get(0));
+    }
+
+    public String defineCondition() {
+        Random random = new Random();
+        int roll = random.nextInt(10);
+        return switch (roll) {
+            case 4, 5 -> WinCondition.SUBMISSION.toString();
+            case 6 -> WinCondition.DISQUALIFICATION.toString();
+            case 7 -> WinCondition.COUNT_OUT.toString();
+            default -> WinCondition.PINFALL.toString();
+        };
     }
 }
