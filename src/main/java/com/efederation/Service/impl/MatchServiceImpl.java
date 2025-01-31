@@ -56,9 +56,9 @@ public class MatchServiceImpl implements MatchService {
             optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> {
                     modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()));
                     if(Objects.equals(npc.getAnnounceName(), modifiableMap.get("winner").toString())) {
-                        modifiableMap.put("defeatedImage", npc.getDefeatedImage());
-                    } else {
                         modifiableMap.put("defeatedImage", wrestler.getDefeatedImage());
+                    } else {
+                        modifiableMap.put("defeatedImage", npc.getDefeatedImage());
                     }
                 }
             ));
