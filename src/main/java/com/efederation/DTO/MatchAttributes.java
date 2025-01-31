@@ -8,4 +8,5 @@ public class MatchAttributes {
     private String participants;
     private String winner;
     private String condition;
+    private String defeatedImage;
 }

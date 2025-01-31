@@ -3,6 +3,7 @@ package com.efederation.Controller;
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerResponse;
+import com.efederation.Enums.ImageType;
 import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
 import com.efederation.Service.impl.JwtServiceImpl;
@@ -13,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,8 +59,11 @@ public class WrestlerController {
     }
 
     @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("wrestlerId") long id) {
-        wrestlerService.uploadImage(id, file);
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file,
+                                              @RequestParam("wrestlerId") long id,
+                                              @RequestParam("type") ImageType uploadType
+                                              ) {
+        wrestlerService.uploadImage(id, file, uploadType);
         return ResponseEntity.ok().body("Image uploaded!");
     }
 }

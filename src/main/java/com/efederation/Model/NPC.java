@@ -28,7 +28,7 @@ public class NPC extends Character{
     private Timestamp createdAt;
 
     @Builder
-    public NPC(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, byte[] imageData) {
-        super(announceName, firstName, lastName, wrestlerAttributes, imageData);
+    public NPC(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, byte[] imageData, byte[] defeatedImage) {
+        super(announceName, firstName, lastName, wrestlerAttributes, imageData, defeatedImage);
     }
 }

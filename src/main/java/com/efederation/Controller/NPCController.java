@@ -3,6 +3,7 @@ package com.efederation.Controller;
 import com.efederation.DTO.NPCResponse;
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
+import com.efederation.Enums.ImageType;
 import com.efederation.Service.NPCService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,12 @@ public class NPCController {
     }
 
     @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("npcId") long id) {
-        npcService.uploadImage(id, file);
+    public ResponseEntity<String> uploadImage(
+            @RequestParam("image") MultipartFile file,
+            @RequestParam("npcId") long id,
+            @RequestParam("type") ImageType uploadType
+            ) {
+        npcService.uploadImage(id, file, uploadType);
         return ResponseEntity.ok().body("Image uploaded!");
     }
 }

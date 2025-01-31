@@ -36,8 +36,10 @@ public class Wrestler extends Character {
 
 
     @Builder
-    public Wrestler(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, byte[] imageData, User user, Set<Match> matches) {
-        super(announceName, firstName, lastName, wrestlerAttributes, imageData);
+    public Wrestler(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes,
+                    byte[] imageData, byte[] defeatedImage, User user, Set<Match> matches)
+    {
+        super(announceName, firstName, lastName, wrestlerAttributes, imageData, defeatedImage);
         this.user = user;
         this.matches = matches;
     }

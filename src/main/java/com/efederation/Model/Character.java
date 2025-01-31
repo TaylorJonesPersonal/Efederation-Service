@@ -22,6 +22,10 @@ public abstract class Character {
     @Column(name="imagedata", length = 1000)
     private byte[] imageData;
 
+    @Lob
+    @Column(name="defeatedImage")
+    private byte[] defeatedImage;
+
     public Integer fight() {
         Random roll = new Random();
         return this.wrestlerAttributes.getSpeed() + this.wrestlerAttributes.getStrength() + roll.nextInt(20);

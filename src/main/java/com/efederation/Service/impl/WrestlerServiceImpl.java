@@ -4,6 +4,7 @@ import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerResponse;
 import com.efederation.Enums.GenderIdentity;
+import com.efederation.Enums.ImageType;
 import com.efederation.Model.User;
 import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
@@ -63,17 +64,29 @@ public class WrestlerServiceImpl implements WrestlerService {
         return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName());
     }
 
-    public void uploadImage(long wrestlerId,MultipartFile file) {
+    public void uploadImage(long wrestlerId, MultipartFile file, ImageType uploadType) {
         Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
-        wrestlerOptional.map(wrestler -> {
-            try {
-                wrestler.setImageData(file.getBytes());
-                wrestlerRepository.save(wrestler);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return wrestler;
-        });
+        if(uploadType == ImageType.MAIN) {
+            wrestlerOptional.map(wrestler -> {
+                try {
+                    wrestler.setImageData(file.getBytes());
+                    wrestlerRepository.save(wrestler);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return wrestler;
+            });
+        } else {
+            wrestlerOptional.map(wrestler -> {
+                try {
+                    wrestler.setDefeatedImage(file.getBytes());
+                    wrestlerRepository.save(wrestler);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return wrestler;
+            });
+        }
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {

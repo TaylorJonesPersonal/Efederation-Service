@@ -53,7 +53,15 @@ public class MatchServiceImpl implements MatchService {
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
             String participants = "%s vs. %s";
-            optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()))));
+            optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> {
+                    modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()));
+                    if(Objects.equals(npc.getAnnounceName(), modifiableMap.get("winner").toString())) {
+                        modifiableMap.put("defeatedImage", npc.getDefeatedImage());
+                    } else {
+                        modifiableMap.put("defeatedImage", wrestler.getDefeatedImage());
+                    }
+                }
+            ));
             LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
             String dateOnly = timestamp.format(formatter);
             modifiableMap.put("created_at", dateOnly);

@@ -4,6 +4,7 @@ import com.efederation.DTO.NPCResponse;
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.Enums.GenderIdentity;
+import com.efederation.Enums.ImageType;
 import com.efederation.Model.NPC;
 import com.efederation.Model.WrestlerAttributes;
 import com.efederation.Repository.NPCRepository;
@@ -70,17 +71,30 @@ public class NPCServiceImpl implements NPCService {
         });
     }
 
-    public void uploadImage(long npcId, MultipartFile file) {
+    //update this to use reflection to decrease the redundant code
+    public void uploadImage(long npcId, MultipartFile file, ImageType uploadType) {
         Optional<NPC> optionalNPC = npcRepository.findById(npcId);
-        optionalNPC.map(npc -> {
-            try {
-                npc.setImageData(file.getBytes());
-                npcRepository.save(npc);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return npc;
-        });
+        if(uploadType == ImageType.MAIN) {
+            optionalNPC.map(npc -> {
+                try {
+                    npc.setImageData(file.getBytes());
+                    npcRepository.save(npc);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return npc;
+            });
+        } else {
+            optionalNPC.map(npc -> {
+                try {
+                    npc.setDefeatedImage(file.getBytes());
+                    npcRepository.save(npc);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return npc;
+            });
+        }
     }
 
 }
