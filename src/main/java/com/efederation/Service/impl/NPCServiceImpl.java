@@ -74,20 +74,9 @@ public class NPCServiceImpl implements NPCService {
     //update this to use reflection to decrease the redundant code
     public void uploadImage(long npcId, MultipartFile file, ImageType uploadType) {
         Optional<NPC> optionalNPC = npcRepository.findById(npcId);
-        if(uploadType == ImageType.MAIN) {
             optionalNPC.map(npc -> {
                 try {
-                    npc.setImageData(file.getBytes());
-                    npcRepository.save(npc);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                return npc;
-            });
-        } else {
-            optionalNPC.map(npc -> {
-                try {
-                    npc.setDefeatedImage(file.getBytes());
+                    npc.setImageProperty(uploadType, file.getBytes());
                     npcRepository.save(npc);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -95,6 +84,4 @@ public class NPCServiceImpl implements NPCService {
                 return npc;
             });
         }
-    }
-
 }

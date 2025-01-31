@@ -66,27 +66,15 @@ public class WrestlerServiceImpl implements WrestlerService {
 
     public void uploadImage(long wrestlerId, MultipartFile file, ImageType uploadType) {
         Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
-        if(uploadType == ImageType.MAIN) {
             wrestlerOptional.map(wrestler -> {
                 try {
-                    wrestler.setImageData(file.getBytes());
+                    wrestler.setImageProperty(uploadType, file.getBytes());
                     wrestlerRepository.save(wrestler);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 return wrestler;
             });
-        } else {
-            wrestlerOptional.map(wrestler -> {
-                try {
-                    wrestler.setDefeatedImage(file.getBytes());
-                    wrestlerRepository.save(wrestler);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                return wrestler;
-            });
-        }
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {

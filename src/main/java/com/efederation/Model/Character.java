@@ -1,6 +1,7 @@
 package com.efederation.Model;
 
 import com.efederation.Converters.HashMapConverter;
+import com.efederation.Enums.ImageType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Random;
@@ -25,6 +26,13 @@ public abstract class Character {
     @Lob
     @Column(name="defeatedImage")
     private byte[] defeatedImage;
+
+    public void setImageProperty(ImageType type, byte[] imageData) {
+        switch(type) {
+            case MAIN -> this.imageData = imageData;
+            case DEFEATED -> this.defeatedImage = imageData;
+        }
+    }
 
     public Integer fight() {
         Random roll = new Random();
