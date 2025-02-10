@@ -39,6 +39,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Transactional
     public void createMatch(Match newMatch) {
+        newMatch.getMatchEvents().forEach(matchEvent -> matchEvent.setMatch(newMatch));
         matchRepository.save(newMatch);
     }
 

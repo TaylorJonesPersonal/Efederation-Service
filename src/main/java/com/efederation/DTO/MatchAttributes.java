@@ -9,4 +9,5 @@ public class MatchAttributes {
     private String winner;
     private String condition;
     private String defeatedImage;
+    private String description;
 }
