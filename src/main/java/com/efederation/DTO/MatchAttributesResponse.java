@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatchAttributesResponse {
-    private long match_id;
+    private long matchId;
     private MatchAttributes matchAttributes;
 }
 

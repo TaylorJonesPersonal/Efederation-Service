@@ -1,6 +1,7 @@
 package com.efederation.DTO;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class MatchAttributes {
@@ -9,5 +10,5 @@ public class MatchAttributes {
     private String winner;
     private String condition;
     private String defeatedImage;
-    private String description;
+    private List<MatchAttributesEvent> events;
 }

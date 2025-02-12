@@ -17,12 +17,16 @@ import java.util.Set;
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long match_id;
+    private long matchId;
 
     @ManyToMany
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Wrestler> human_participants;
 
     @ManyToMany
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<NPC> npc_participants;
 
     private String winner;

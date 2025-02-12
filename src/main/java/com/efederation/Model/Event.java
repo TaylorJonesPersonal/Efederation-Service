@@ -19,7 +19,10 @@ public abstract class Event {
     @Nullable
     private byte[] imageData;
 
-    public Event(String name, String description, byte[] imageData) {
+    public Event() {
+    }
+
+    public Event(String name, String description, @Nullable byte[] imageData) {
         this.name = name;
         this.description = description;
         this.imageData = imageData;
@@ -30,27 +33,27 @@ public abstract class Event {
         this.description = description;
     }
 
-    private String getName() {
+    public String getName() {
         return this.name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this. name = name;
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return this.description;
     }
 
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    private byte[] getImageData() {
+    public byte[] getImageData() {
         return this.imageData;
     }
 
-    private void setImageData(byte[] imageData) {
+    public void setImageData(byte[] imageData) {
         this.imageData = imageData;
     }
 

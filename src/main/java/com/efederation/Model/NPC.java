@@ -20,7 +20,7 @@ public class NPC extends Character{
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name="npc_id"),
-            inverseJoinColumns = @JoinColumn(name="match_id")
+            inverseJoinColumns = @JoinColumn(name="matchId")
     )
     private Set<Match> matches;
 

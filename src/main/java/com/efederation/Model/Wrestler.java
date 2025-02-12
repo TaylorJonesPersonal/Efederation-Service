@@ -27,7 +27,7 @@ public class Wrestler extends Character {
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name="wrestler_id"),
-            inverseJoinColumns = @JoinColumn(name="match_id")
+            inverseJoinColumns = @JoinColumn(name="matchId")
     )
     private Set<Match> matches;
 

@@ -15,15 +15,13 @@ public class MatchEvent extends Event {
     private long event_id;
 
     @ManyToOne
-    @JoinColumn(name="match_id")
+    @JoinColumn(name="matchId")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Match match;
 
-    @Builder
-    public MatchEvent(String name, String description, Match match) {
-        super(name, description);
-        this.match = match;
+    public MatchEvent() {
+        super();
     }
 
     @Builder
