@@ -18,7 +18,7 @@ public class MatchConstants {
 
     // make a custom class here with private var String[] for each %s and what it represents. This can be parsed and
     // winners, losers and etc. can be understood to be passed here.
-    private final List<String> matchEventArr = List.of(DEVASTATION, LADDER_ATTACK);
+    private final List<String> matchEventArr = List.of(DEVASTATION, LADDER_ATTACK, STEEL_CHAIR_MISFIRE);
 
     public Set<String> drawEvents() {
         Set<String> drawnEvents = new HashSet<>();
