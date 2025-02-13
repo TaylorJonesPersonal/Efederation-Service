@@ -11,4 +11,6 @@ public class CommonConstants {
     public static String PARTICIPANT_VS = "%s vs. %s";
     public static String BLANK = "";
     public static String STD_DATE_FORMAT = "yyyy-MM-dd";
+    public static String ANOTHER = "another";
+    public static String A = "a";
 }

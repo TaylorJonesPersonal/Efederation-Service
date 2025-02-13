@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,13 +93,26 @@ public class MatchServiceImpl implements MatchService {
 
     public MatchEvent formatEventDescription(String drawnEvent, EventDesignators eventDesignators) {
         Random random = new Random();
+        Pattern pattern = Pattern.compile(Pattern.quote(Targets.MOVE.toString()));
         String title = drawnEvent.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
-        String formattedEvent = drawnEvent
+        Matcher matcher = pattern.matcher(drawnEvent);
+        StringBuffer sb = new StringBuffer();
+        String priorMoveReplacement = CommonConstants.BLANK;
+        while(matcher.find()) {
+            String replacedMove = matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)];
+            if(replacedMove.equals(priorMoveReplacement)) {
+                matcher.appendReplacement(sb, CommonConstants.ANOTHER + " " + replacedMove);
+            } else {
+                matcher.appendReplacement(sb, CommonConstants.A + " " + replacedMove);
+            }
+            priorMoveReplacement = replacedMove;
+        }
+        matcher.appendTail(sb);
+        String formattedEvent = sb.toString()
                 .split(CommonConstants.PIPE_REG_EX)[1]
                 .replaceAll(Targets.LOSER.toString(), eventDesignators.loser)
                 .replaceAll(Targets.WINNER.toString(), eventDesignators.winner)
-                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition)
-                .replaceAll(Targets.MOVE.toString(), matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)]);
+                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition);
         return MatchEvent.builder().name(title).description(formattedEvent).build();
     }
 
