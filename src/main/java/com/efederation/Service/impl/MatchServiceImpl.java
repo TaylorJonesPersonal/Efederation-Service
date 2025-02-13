@@ -13,9 +13,9 @@ import com.efederation.Repository.NPCRepository;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.MatchService;
 import com.efederation.Utils.CommonUtils;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,17 +44,17 @@ public class MatchServiceImpl implements MatchService {
     CommonUtils commonUtils;
 
     @Autowired
-    CommonConstants commonConstants;
+    MatchConstants matchConstants;
 
     @Autowired
-    MatchConstants matchConstants;
+    ObjectMapper objectMapper;
 
     @Transactional
     public CreateMatchResponse createMatch(CreateMatchRequest createMatchRequest) {
         Set<Wrestler> wrestlerSet = new HashSet<>();
         Set<NPC> npcSet = new HashSet<>();
         for(String participant_id : createMatchRequest.getParticipant_ids()) {
-            if(participant_id.startsWith(commonConstants.getNpcDenotation())) {
+            if(participant_id.startsWith(CommonConstants.npcDenotation)) {
                 Optional<NPC> npcOptional = npcRepository.findById(Long.parseLong(participant_id.substring(1)));
                 npcOptional.ifPresent(npcSet::add);
             } else {
@@ -70,10 +70,12 @@ public class MatchServiceImpl implements MatchService {
         Set<MatchEvent> matchEvents = drawnEvents
                 .stream()
                 .map(event -> formatEventDescription(
-                        event, new EventDesignators(
-                                winnersLosers.getWinner().getAnnounceName(),
-                                winnersLosers.getLoser().getAnnounceName(),
-                                victoryCondition)))
+                        event,
+                        EventDesignators
+                                .builder()
+                                .winner(winnersLosers.getWinner().getAnnounceName())
+                                .loser(winnersLosers.getLoser().getAnnounceName())
+                                .victoryCondition(victoryCondition).build()))
                 .collect(Collectors.toSet());
         Match newMatch = Match.builder()
                 .human_participants(wrestlerSet)
@@ -89,9 +91,9 @@ public class MatchServiceImpl implements MatchService {
 
     public MatchEvent formatEventDescription(String drawnEvent, EventDesignators eventDesignators) {
         Random random = new Random();
-        String title = drawnEvent.split("\\|")[0].replaceAll("\\|", "");
+        String title = drawnEvent.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
         String formattedEvent = drawnEvent
-                .split("\\|")[1]
+                .split(CommonConstants.PIPE_REG_EX)[1]
                 .replaceAll(Targets.LOSER.toString(), eventDesignators.loser)
                 .replaceAll(Targets.WINNER.toString(), eventDesignators.winner)
                 .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition)
@@ -100,18 +102,15 @@ public class MatchServiceImpl implements MatchService {
     }
 
     public List<MatchAttributesResponse> getMatches (int wrestlerId) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonConstants.STD_DATE_FORMAT);
         List<Map<String, Object>> matches = matchRepository.getMatchesByWrestlerId(wrestlerId);
         List<MatchAttributesResponse> matchAttributeList = new ArrayList<>();
         matches.forEach(match -> {
             Map<String, Object> modifiableMap = new HashMap<>(match);
             Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
-            String participants = "%s vs. %s";
             optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> {
-                    modifiableMap.put("participants", String.format(participants, wrestler.getAnnounceName(), npc.getAnnounceName()));
+                    modifiableMap.put("participants", String.format(CommonConstants.PARTICIPANT_VS, wrestler.getAnnounceName(), npc.getAnnounceName()));
                     if(Objects.equals(npc.getAnnounceName(), modifiableMap.get("winner").toString())) {
                         modifiableMap.put("defeatedImage", wrestler.getDefeatedImage());
                     } else {
@@ -142,6 +141,7 @@ public class MatchServiceImpl implements MatchService {
         private String loser;
         private String victoryCondition;
 
+        @Builder
         public EventDesignators(String winner, String loser, String victoryCondition) {
             this.winner = winner;
             this.loser = loser;

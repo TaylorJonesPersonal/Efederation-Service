@@ -37,9 +37,6 @@ public class AuthServiceImpl {
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
 
-    @Autowired
-    CommonConstants constants;
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtServiceImpl jwtService;
@@ -86,7 +83,7 @@ public class AuthServiceImpl {
         }
         var jwtToken = jwtService.generateToken(user);
         try {
-            emailService.sendEmailVerification(user.getEmail(), constants.getFromEmail());
+            emailService.sendEmailVerification(user.getEmail(), CommonConstants.fromEmail);
         } catch(MessagingException e) {
             e.printStackTrace();
         }

@@ -3,7 +3,6 @@ package com.efederation.Utils;
 import com.efederation.Constants.CommonConstants;
 import com.efederation.Enums.WeightClass;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -13,9 +12,6 @@ import java.util.Base64;
 @Data
 public class CommonUtils {
 
-    @Autowired
-    CommonConstants commonConstants;
-
     public String getBase64Image(byte[] imageData) {
         if(imageData != null) {
             return Base64.getEncoder().encodeToString(imageData);
@@ -24,11 +20,11 @@ public class CommonUtils {
     }
 
     public WeightClass deriveWeightClassFromWeight(double weight) {
-        if(weight < commonConstants.getLIGHT_HEAVYWEIGHT_MIN_WEIGHT()) {
+        if(weight < CommonConstants.LIGHT_HEAVYWEIGHT_MIN_WEIGHT) {
             return WeightClass.CRUISERWEIGHT;
-        } else if(weight < commonConstants.getHEAVYWEIGHT_MIN_WEIGHT()) {
+        } else if(weight < CommonConstants.HEAVYWEIGHT_MIN_WEIGHT) {
             return WeightClass.LIGHT_HEAVYWEIGHT;
-        } else if(weight < commonConstants.getSUPERHEAVYWEIGHT_MIN_WEIGHT()) {
+        } else if(weight < CommonConstants.SUPERHEAVYWEIGHT_MIN_WEIGHT) {
             return WeightClass.HEAVYWEIGHT;
         } else {
             return WeightClass.SUPER_HEAVYWEIGHT;
