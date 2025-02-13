@@ -3,6 +3,7 @@ package com.efederation.Service.impl;
 import com.efederation.Constants.CommonConstants;
 import com.efederation.Constants.MatchConstants;
 import com.efederation.DTO.*;
+import com.efederation.Enums.Targets;
 import com.efederation.Enums.WinCondition;
 import com.efederation.Model.*;
 import com.efederation.Model.Character;
@@ -15,12 +16,14 @@ import com.efederation.Utils.CommonUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -48,7 +51,6 @@ public class MatchServiceImpl implements MatchService {
 
     @Transactional
     public CreateMatchResponse createMatch(CreateMatchRequest createMatchRequest) {
-        Random random = new Random();
         Set<Wrestler> wrestlerSet = new HashSet<>();
         Set<NPC> npcSet = new HashSet<>();
         for(String participant_id : createMatchRequest.getParticipant_ids()) {
@@ -64,28 +66,37 @@ public class MatchServiceImpl implements MatchService {
         combinedArray.addAll(npcSet);
         WinnersLosers winnersLosers = defineWinnersLosers(combinedArray);
         String victoryCondition = defineCondition();
-        String eventDescription = "%s performed a %s. %s then performed a %s on %s. After a long battle, %s wins by %s.";
-        MatchEvent matchEvent = MatchEvent.builder().name("Devastation").description(
-                String.format(
-                        eventDescription,
-                        winnersLosers.getWinner().getAnnounceName(),
-                        matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)],
-                        winnersLosers.getWinner().getAnnounceName(),
-                        matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)],
-                        winnersLosers.getLoser().getAnnounceName(),
-                        winnersLosers.getWinner().getAnnounceName(),
-                        victoryCondition
-                )).build();
+        Set<String> drawnEvents = matchConstants.drawEvents();
+        Set<MatchEvent> matchEvents = drawnEvents
+                .stream()
+                .map(event -> formatEventDescription(
+                        event, new EventDesignators(
+                                winnersLosers.getWinner().getAnnounceName(),
+                                winnersLosers.getLoser().getAnnounceName(),
+                                victoryCondition)))
+                .collect(Collectors.toSet());
         Match newMatch = Match.builder()
                 .human_participants(wrestlerSet)
                 .npc_participants(npcSet)
                 .winner(winnersLosers.getWinner().getAnnounceName())
                 .condition(victoryCondition)
-                .matchEvents(Set.of(matchEvent))
+                .matchEvents(matchEvents)
                 .build();
         newMatch.getMatchEvents().forEach(event -> event.setMatch(newMatch));
         matchRepository.save(newMatch);
         return CreateMatchResponse.builder().winnerName(winnersLosers.getWinner().getAnnounceName()).build();
+    }
+
+    public MatchEvent formatEventDescription(String drawnEvent, EventDesignators eventDesignators) {
+        Random random = new Random();
+        String title = drawnEvent.split("\\|")[0].replaceAll("\\|", "");
+        String formattedEvent = drawnEvent
+                .split("\\|")[1]
+                .replaceAll(Targets.LOSER.toString(), eventDesignators.loser)
+                .replaceAll(Targets.WINNER.toString(), eventDesignators.winner)
+                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition)
+                .replaceAll(Targets.MOVE.toString(), matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)]);
+        return MatchEvent.builder().name(title).description(formattedEvent).build();
     }
 
     public List<MatchAttributesResponse> getMatches (int wrestlerId) {
@@ -113,9 +124,9 @@ public class MatchServiceImpl implements MatchService {
             modifiableMap.put("created_at", dateOnly);
             List<MatchEvent> matchEvents = matchEventRepository.findAllByMatchMatchId((Long) modifiableMap.get("match_id"));
             MatchAttributes attributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
-            List<MatchAttributesEvent> matchAttributesEventList = new ArrayList<>();
+            List<MatchAttributesResponseEvent> matchAttributesEventList = new ArrayList<>();
             matchEvents.forEach(matchEvent -> {
-                MatchAttributesEvent event = MatchAttributesEvent.builder().name(matchEvent.getName()).description(matchEvent.getDescription()).build();
+                MatchAttributesResponseEvent event = MatchAttributesResponseEvent.builder().name(matchEvent.getName()).description(matchEvent.getDescription()).build();
                 matchAttributesEventList.add(event);
             });
             attributes.setEvents(matchAttributesEventList);
@@ -125,11 +136,27 @@ public class MatchServiceImpl implements MatchService {
         return matchAttributeList;
     }
 
+    @Data
+    public static class EventDesignators {
+        private String winner;
+        private String loser;
+        private String victoryCondition;
+
+        public EventDesignators(String winner, String loser, String victoryCondition) {
+            this.winner = winner;
+            this.loser = loser;
+            this.victoryCondition = victoryCondition;
+        }
+    }
+
     public WinnersLosers defineWinnersLosers(List<Character> characters) {
+        Comparator<Character> characterComparator = Comparator.comparingInt(Character::fight);
+        Character winner = characters.stream().max(characterComparator).orElse(characters.get(0));
+        Character loser = characters.stream().filter(character -> !character.equals(winner)).min(characterComparator).orElse(characters.get(1));
         return WinnersLosers
                 .builder()
-                .winner(characters.stream().max(Comparator.comparingInt(Character::fight)).orElse(characters.get(0)))
-                .loser(characters.stream().min(Comparator.comparingInt(Character::fight)).orElse(characters.get(characters.size() - 1)))
+                .winner(winner)
+                .loser(loser)
                 .build();
     }
 

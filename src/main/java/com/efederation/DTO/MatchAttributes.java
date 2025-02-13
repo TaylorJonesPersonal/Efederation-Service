@@ -10,5 +10,5 @@ public class MatchAttributes {
     private String winner;
     private String condition;
     private String defeatedImage;
-    private List<MatchAttributesEvent> events;
+    private List<MatchAttributesResponseEvent> events;
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MatchAttributesEvent {
+public class MatchAttributesResponseEvent {
 private String name;
 private String description;
 }
