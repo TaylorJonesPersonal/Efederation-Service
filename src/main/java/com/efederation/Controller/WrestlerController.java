@@ -1,5 +1,6 @@
 package com.efederation.Controller;
 
+import com.efederation.Constants.ImageConstants;
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerResponse;
@@ -8,12 +9,15 @@ import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
 import com.efederation.Service.impl.JwtServiceImpl;
 import com.efederation.Service.WrestlerService;
+import com.efederation.Utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,9 @@ public class WrestlerController {
     @Autowired
     JwtServiceImpl jwtService;
 
+    @Autowired
+    CommonUtils commonUtils;
+
     @GetMapping
     public ResponseEntity<List<WrestlerResponse>> getWrestlers(@RequestHeader("Authorization") String authHeader) {
         String username = jwtService.extractUsername(authHeader.replaceAll("Bearer ", ""));
@@ -37,6 +44,20 @@ public class WrestlerController {
         return userOptional
                 .map(user -> new ResponseEntity<>(wrestlerService.getWrestlers(user), HttpStatus.OK))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/image/base64", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> getBase64(@RequestParam("image") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(commonUtils.getBase64Image(file.getBytes()));
+        } catch(IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/images")
+    public ResponseEntity<List<String>> getWrestlerDefaultImages() {
+        return ResponseEntity.ok(ImageConstants.DEFAULT_IMAGES_BASE_64);
     }
 
     @PostMapping("/create")
