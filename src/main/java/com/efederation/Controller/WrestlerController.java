@@ -2,8 +2,8 @@ package com.efederation.Controller;
 
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
+import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
-import com.efederation.Enums.ImageType;
 import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
 import com.efederation.Service.impl.JwtServiceImpl;
@@ -78,12 +78,9 @@ public class WrestlerController {
         return ResponseEntity.ok().body("Wrestler updated!");
     }
 
-    @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file,
-                                              @RequestParam("wrestlerId") long id,
-                                              @RequestParam("type") ImageType uploadType
-                                              ) {
-        wrestlerService.uploadImage(id, file, uploadType);
+    @PostMapping(value = "/image/create", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<String> uploadImage(@RequestBody WrestlerImageCreateRequest imageCreateRequest) {
+        wrestlerService.uploadImage(imageCreateRequest);
         return ResponseEntity.ok().body("Image uploaded!");
     }
 }

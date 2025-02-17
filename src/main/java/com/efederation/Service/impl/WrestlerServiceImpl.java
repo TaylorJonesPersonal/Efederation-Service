@@ -2,9 +2,9 @@ package com.efederation.Service.impl;
 
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
+import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
 import com.efederation.Enums.GenderIdentity;
-import com.efederation.Enums.ImageType;
 import com.efederation.Model.User;
 import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
@@ -14,9 +14,6 @@ import com.efederation.Utils.CommonUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -64,15 +61,12 @@ public class WrestlerServiceImpl implements WrestlerService {
         return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getWrestler_id());
     }
 
-    public void uploadImage(long wrestlerId, MultipartFile file, ImageType uploadType) {
-        Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(wrestlerId);
+    public void uploadImage(WrestlerImageCreateRequest request) {
+        Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(request.getId());
             wrestlerOptional.map(wrestler -> {
-                try {
-                    wrestler.setImageProperty(uploadType, file.getBytes());
+                    byte[] byteArrayImage = Base64.getDecoder().decode(request.getImageBase64());
+                    wrestler.setImageProperty(request.getType(), byteArrayImage);
                     wrestlerRepository.save(wrestler);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 return wrestler;
             });
     }

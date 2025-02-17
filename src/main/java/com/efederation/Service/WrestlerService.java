@@ -2,10 +2,9 @@ package com.efederation.Service;
 
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
+import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
-import com.efederation.Enums.ImageType;
 import com.efederation.Model.User;
-import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface WrestlerService {
@@ -14,5 +13,5 @@ public interface WrestlerService {
 
     void updateWrestlerJsonAttributes(long wrestlerId);
 
-    void uploadImage(long wrestlerId, MultipartFile file, ImageType uploadType);
+    void uploadImage(WrestlerImageCreateRequest request);
 }

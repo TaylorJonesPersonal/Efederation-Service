@@ -59,7 +59,7 @@ public class NPCServiceImpl implements NPCService {
                 ))
                 .build();
         npcRepository.save(newNpc);
-        return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName());
+        return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName(), newNpc.getNpc_id());
     }
 
     public void updateNPCJsonAttributes(long npcId) {
