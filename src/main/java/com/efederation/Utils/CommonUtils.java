@@ -5,8 +5,12 @@ import com.efederation.Enums.WeightClass;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.Scanner;
 
 @Component
 @Data
@@ -33,5 +37,19 @@ public class CommonUtils {
 
     public LocalDateTime convertTimestampWithoutExplicitT(String timestamp) {
         return LocalDateTime.parse(timestamp.replace(" ", "T"));
+    }
+
+    public List<String> generateBase64ListFromResourceFile(String fileName, String delimiter) {
+        List<String> base64List = new ArrayList<>();
+        try(InputStream inputStream = CommonUtils.class.getClassLoader().getResourceAsStream(fileName); Scanner scanner = new Scanner(inputStream)) {
+            scanner.useDelimiter(delimiter);
+            while(scanner.hasNext()) {
+                String phrase = scanner.next();
+                base64List.add(phrase.trim());
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return base64List;
     }
 }

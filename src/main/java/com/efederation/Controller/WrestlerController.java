@@ -1,6 +1,5 @@
 package com.efederation.Controller;
 
-import com.efederation.Constants.ImageConstants;
 import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerResponse;
@@ -57,7 +56,7 @@ public class WrestlerController {
 
     @GetMapping("/images")
     public ResponseEntity<List<String>> getWrestlerDefaultImages() {
-        return ResponseEntity.ok(ImageConstants.DEFAULT_IMAGES_BASE_64);
+        return ResponseEntity.ok(commonUtils.generateBase64ListFromResourceFile("defaultWrestlerImages.txt", ","));
     }
 
     @PostMapping("/create")
