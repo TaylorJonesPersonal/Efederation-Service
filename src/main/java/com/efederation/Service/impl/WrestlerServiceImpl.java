@@ -61,7 +61,7 @@ public class WrestlerServiceImpl implements WrestlerService {
                         )
                 ).build();
         wrestlerRepository.save(newWrestler);
-        return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName());
+        return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getWrestler_id());
     }
 
     public void uploadImage(long wrestlerId, MultipartFile file, ImageType uploadType) {

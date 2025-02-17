@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class SubmitCharacterResponse {
     private String status;
     private String wrestler;
+    private long id;
 }
