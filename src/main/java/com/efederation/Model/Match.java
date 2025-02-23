@@ -38,6 +38,11 @@ public class Match {
     @ToString.Exclude
     private Set<MatchEvent> matchEvents = new HashSet<>();
 
+    @OneToMany(mappedBy="match", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<Memory> matchMemories = new HashSet<>();
+
     @CreationTimestamp
     private Timestamp createdAt;
 

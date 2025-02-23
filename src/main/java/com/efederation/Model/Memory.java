@@ -2,17 +2,20 @@ package com.efederation.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class MatchEvent extends Event {
+public class Memory extends Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long event_id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name="matchId", nullable = false)
@@ -20,12 +23,12 @@ public class MatchEvent extends Event {
     @ToString.Exclude
     private Match match;
 
-    public MatchEvent() {
-        super();
-    }
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     @Builder
-    public MatchEvent(String name, String description) {
+    public Memory(String name, String description) {
         super(name, description);
     }
+
 }
