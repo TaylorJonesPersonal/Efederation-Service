@@ -3,10 +3,10 @@ package com.efederation.Enums;
 public enum Targets {
 
     PLAYER_CHARACTER("%PLAYER_CHARACTER"),
-    AUDIENCE("the Audience"),
+    AUDIENCE("%AUDIENCE"),
     MOVE("%MOVE"),
     OPPONENT("%OPPONENT"),
-    REF("The referee, %REFEREE"),
+    REF("%REFEREE"),
     WINNER("%WINNER"),
     LOSER("%LOSER"),
     VICTORY_CONDITION("%VICTORY_CONDITION");
