@@ -17,7 +17,7 @@ public class MemoryConstants {
             " with %OPPONENT.";
 
     private final String REFEREE_BIASED = "Referee Biased|%OPPONENT brought a weapon in to the ring right in front of the" +
-            " %REFEREE. As they went to swing, it looked like the ref wasn't going to stop it. %PLAYER_CHARACTER avoided the" +
+            " referee, %REFEREE. As they went to swing, it looked like the ref wasn't going to stop it. %PLAYER_CHARACTER avoided the" +
             " weapon strike, but this bias clearly will favor %OPPONENT";
 
 

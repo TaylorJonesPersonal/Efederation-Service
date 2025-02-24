@@ -75,7 +75,7 @@ public class MatchServiceImpl implements MatchService {
         Set<String> drawnEvents = matchConstants.drawEvents();
         Set<MatchEvent> matchEvents = drawnEvents
                 .stream()
-                .map(event -> formatEventDescription(
+                .map(event -> (MatchEvent) formatDescription(
                         event,
                         EventDesignators
                                 .builder()
@@ -89,7 +89,7 @@ public class MatchServiceImpl implements MatchService {
         Set<String> drawnMemories = memoryConstants.drawMemories();
         Set<Memory> matchMemories = drawnMemories
                 .stream()
-                .map(event -> formatMemoryDescription(
+                .map(event -> (Memory) formatDescription(
                         event,
                         EventDesignators
                                 .builder()
@@ -115,12 +115,12 @@ public class MatchServiceImpl implements MatchService {
         return CreateMatchResponse.builder().winnerName(winnersLosers.getWinner().getAnnounceName()).build();
     }
 
-    public MatchEvent formatEventDescription(String drawnEvent, EventDesignators eventDesignators) {
+    public Event formatDescription(String drawn, EventDesignators eventDesignators) {
         Random random = new Random();
         Pattern pattern = Pattern.compile(Pattern.quote(Targets.MOVE.toString()));
-        String title = drawnEvent.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
-        Matcher matcher = pattern.matcher(drawnEvent);
-        StringBuffer sb = new StringBuffer();
+        String title = drawn.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
+        Matcher matcher = pattern.matcher(drawn);
+        StringBuilder sb = new StringBuilder();
         String priorMoveReplacement = CommonConstants.BLANK;
         while(matcher.find()) {
             String replacedMove = matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)];
@@ -140,35 +140,7 @@ public class MatchServiceImpl implements MatchService {
                 .replaceAll(Targets.OPPONENT.toString(), eventDesignators.opponent)
                 .replaceAll(Targets.PLAYER_CHARACTER.toString(), eventDesignators.playerCharacter)
                 .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition);
-        return MatchEvent.builder().name(title).description(formattedEvent).build();
-    }
-
-    public Memory formatMemoryDescription(String drawnEvent, EventDesignators eventDesignators) {
-        Random random = new Random();
-        Pattern pattern = Pattern.compile(Pattern.quote(Targets.MOVE.toString()));
-        String title = drawnEvent.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
-        Matcher matcher = pattern.matcher(drawnEvent);
-        StringBuffer sb = new StringBuffer();
-        String priorMoveReplacement = CommonConstants.BLANK;
-        while(matcher.find()) {
-            String replacedMove = matchConstants.getMoves()[random.nextInt(matchConstants.getMoves().length)];
-            if(replacedMove.equals(priorMoveReplacement)) {
-                matcher.appendReplacement(sb, CommonConstants.ANOTHER + " " + replacedMove);
-            } else {
-                matcher.appendReplacement(sb, CommonConstants.A + " " + replacedMove);
-            }
-            priorMoveReplacement = replacedMove;
-        }
-        matcher.appendTail(sb);
-        String formattedEvent = sb.toString()
-                .split(CommonConstants.PIPE_REG_EX)[1]
-                .replaceAll(Targets.LOSER.toString(), eventDesignators.loser)
-                .replaceAll(Targets.WINNER.toString(), eventDesignators.winner)
-                .replaceAll(Targets.REF.toString(), eventDesignators.referee)
-                .replaceAll(Targets.OPPONENT.toString(), eventDesignators.opponent)
-                .replaceAll(Targets.PLAYER_CHARACTER.toString(), eventDesignators.playerCharacter)
-                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition);
-        return Memory.builder().name(title).description(formattedEvent).build();
+        return Event.builder().name(title).description(formattedEvent).build();
     }
 
     public List<MatchAttributesResponse> getMatches (int wrestlerId) {

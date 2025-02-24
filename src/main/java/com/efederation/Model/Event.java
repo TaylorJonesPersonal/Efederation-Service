@@ -3,6 +3,7 @@ package com.efederation.Model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
@@ -10,7 +11,8 @@ import java.util.Arrays;
 
 @MappedSuperclass
 @EqualsAndHashCode
-public abstract class Event {
+@Builder
+public class Event {
     private String name;
     private String description;
 
