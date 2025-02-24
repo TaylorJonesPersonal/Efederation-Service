@@ -6,6 +6,7 @@ import com.efederation.Constants.MemoryConstants;
 import com.efederation.DTO.*;
 import com.efederation.Enums.Targets;
 import com.efederation.Enums.WinCondition;
+import com.efederation.Exception.MatchCreationException;
 import com.efederation.Model.*;
 import com.efederation.Model.Character;
 import com.efederation.Repository.MatchEventRepository;
@@ -21,6 +22,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,66 +58,91 @@ public class MatchServiceImpl implements MatchService {
     ObjectMapper objectMapper;
 
     @Transactional
-    public CreateMatchResponse createMatch(CreateMatchRequest createMatchRequest) {
-        Set<Wrestler> wrestlerSet = new HashSet<>();
-        Set<NPC> npcSet = new HashSet<>();
-        for(String participant_id : createMatchRequest.getParticipant_ids()) {
-            if(participant_id.startsWith(CommonConstants.npcDenotation)) {
-                Optional<NPC> npcOptional = npcRepository.findById(Long.parseLong(participant_id.substring(1)));
-                npcOptional.ifPresent(npcSet::add);
-            } else {
-                Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(Long.parseLong(participant_id));
-                wrestlerOptional.ifPresent(wrestlerSet::add);
+    public CreateMatchResponse createMatch(CreateMatchRequest createMatchRequest) throws MatchCreationException {
+        try {
+            Set<Wrestler> wrestlerSet = new HashSet<>();
+            Set<NPC> npcSet = new HashSet<>();
+            for (String participant_id : createMatchRequest.getParticipant_ids()) {
+                if (participant_id.startsWith(CommonConstants.npcDenotation)) {
+                    Optional<NPC> npcOptional = npcRepository.findById(Long.parseLong(participant_id.substring(1)));
+                    npcOptional.ifPresent(npcSet::add);
+                } else {
+                    Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(Long.parseLong(participant_id));
+                    wrestlerOptional.ifPresent(wrestlerSet::add);
+                }
             }
+            List<Character> combinedArray = new ArrayList<>(wrestlerSet);
+            combinedArray.addAll(npcSet);
+            WinnersLosers winnersLosers = defineWinnersLosers(combinedArray);
+            String victoryCondition = defineCondition();
+            Set<String> drawnEvents = matchConstants.drawEvents();
+            Set<MatchEvent> matchEvents = drawnEvents
+                    .stream()
+                    .map(event ->
+                            {
+                                try {
+                                    return (MatchEvent) formatDescription(
+                                            event,
+                                            EventDesignators
+                                                    .builder()
+                                                    .winner(winnersLosers.getWinner().getAnnounceName())
+                                                    .loser(winnersLosers.getLoser().getAnnounceName())
+                                                    .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
+                                                    .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
+                                                    .referee("Bart McHammond")
+                                                    .victoryCondition(victoryCondition).build(),
+                                            MatchEvent.class);
+                                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                                         IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    )
+                    .collect(Collectors.toSet());
+            Set<String> drawnMemories = memoryConstants.drawMemories();
+            Set<Memory> matchMemories = drawnMemories
+                    .stream()
+                    .map(event -> {
+                        try {
+                            return (Memory) formatDescription(
+                                    event,
+                                    EventDesignators
+                                            .builder()
+                                            .winner(winnersLosers.getWinner().getAnnounceName())
+                                            .loser(winnersLosers.getLoser().getAnnounceName())
+                                            .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
+                                            .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
+                                            .referee("Bart McHammond")
+                                            .victoryCondition(victoryCondition)
+                                            .build(),
+                                    Memory.class
+                            );
+                        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
+                                 IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.toSet());
+            Match newMatch = Match.builder()
+                    .human_participants(wrestlerSet)
+                    .npc_participants(npcSet)
+                    .winner(winnersLosers.getWinner().getAnnounceName())
+                    .condition(victoryCondition)
+                    .matchEvents(matchEvents)
+                    .matchMemories(matchMemories)
+                    .build();
+            newMatch.getMatchEvents().forEach(event -> event.setMatch(newMatch));
+            newMatch.getMatchMemories().forEach(memory -> memory.setMatch(newMatch));
+            matchRepository.save(newMatch);
+            return CreateMatchResponse.builder().winnerName(winnersLosers.getWinner().getAnnounceName()).build();
+        } catch(RuntimeException e) {
+            e.printStackTrace();
+            throw new MatchCreationException(e.getMessage());
         }
-        List<Character> combinedArray = new ArrayList<>(wrestlerSet);
-        combinedArray.addAll(npcSet);
-        WinnersLosers winnersLosers = defineWinnersLosers(combinedArray);
-        String victoryCondition = defineCondition();
-        Set<String> drawnEvents = matchConstants.drawEvents();
-        Set<MatchEvent> matchEvents = drawnEvents
-                .stream()
-                .map(event -> (MatchEvent) formatDescription(
-                        event,
-                        EventDesignators
-                                .builder()
-                                .winner(winnersLosers.getWinner().getAnnounceName())
-                                .loser(winnersLosers.getLoser().getAnnounceName())
-                                .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                .referee("Bart McHammond")
-                                .victoryCondition(victoryCondition).build()))
-                .collect(Collectors.toSet());
-        Set<String> drawnMemories = memoryConstants.drawMemories();
-        Set<Memory> matchMemories = drawnMemories
-                .stream()
-                .map(event -> (Memory) formatDescription(
-                        event,
-                        EventDesignators
-                                .builder()
-                                .winner(winnersLosers.getWinner().getAnnounceName())
-                                .loser(winnersLosers.getLoser().getAnnounceName())
-                                .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                .referee("Bart McHammond")
-                                .victoryCondition(victoryCondition)
-                                .build()))
-                .collect(Collectors.toSet());
-        Match newMatch = Match.builder()
-                .human_participants(wrestlerSet)
-                .npc_participants(npcSet)
-                .winner(winnersLosers.getWinner().getAnnounceName())
-                .condition(victoryCondition)
-                .matchEvents(matchEvents)
-                .matchMemories(matchMemories)
-                .build();
-        newMatch.getMatchEvents().forEach(event -> event.setMatch(newMatch));
-        newMatch.getMatchMemories().forEach(memory -> memory.setMatch(newMatch));
-        matchRepository.save(newMatch);
-        return CreateMatchResponse.builder().winnerName(winnersLosers.getWinner().getAnnounceName()).build();
     }
 
-    public Event formatDescription(String drawn, EventDesignators eventDesignators) {
+    public Event formatDescription(String drawn, EventDesignators eventDesignators, Class<? extends Event> designatedClass)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Random random = new Random();
         Pattern pattern = Pattern.compile(Pattern.quote(Targets.MOVE.toString()));
         String title = drawn.split(CommonConstants.PIPE_REG_EX)[0].replaceAll(CommonConstants.PIPE_REG_EX, CommonConstants.BLANK);
@@ -140,7 +167,10 @@ public class MatchServiceImpl implements MatchService {
                 .replaceAll(Targets.OPPONENT.toString(), eventDesignators.opponent)
                 .replaceAll(Targets.PLAYER_CHARACTER.toString(), eventDesignators.playerCharacter)
                 .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition);
-        return Event.builder().name(title).description(formattedEvent).build();
+        Event newMatchEvent = designatedClass.getDeclaredConstructor().newInstance();
+        newMatchEvent.setDescription(formattedEvent);
+        newMatchEvent.setName(title);
+        return newMatchEvent;
     }
 
     public List<MatchAttributesResponse> getMatches (int wrestlerId) {

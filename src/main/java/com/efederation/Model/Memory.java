@@ -7,8 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Entity
-@Getter
-@Setter
+@Data
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class Memory extends Event {
@@ -25,10 +24,5 @@ public class Memory extends Event {
 
     @CreationTimestamp
     private Timestamp createdAt;
-
-    @Builder
-    public Memory(String name, String description) {
-        super(name, description);
-    }
 
 }
