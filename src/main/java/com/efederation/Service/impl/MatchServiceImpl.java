@@ -9,10 +9,7 @@ import com.efederation.Enums.WinCondition;
 import com.efederation.Exception.MatchCreationException;
 import com.efederation.Model.*;
 import com.efederation.Model.Character;
-import com.efederation.Repository.MatchEventRepository;
-import com.efederation.Repository.MatchRepository;
-import com.efederation.Repository.NPCRepository;
-import com.efederation.Repository.WrestlerRepository;
+import com.efederation.Repository.*;
 import com.efederation.Service.MatchService;
 import com.efederation.Utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +33,9 @@ public class MatchServiceImpl implements MatchService {
 
     @Autowired
     MatchEventRepository matchEventRepository;
+
+    @Autowired
+    MemoryRepository memoryRepository;
 
     @Autowired
     NPCRepository npcRepository;
@@ -184,13 +184,20 @@ public class MatchServiceImpl implements MatchService {
             String dateOnly = timestamp.format(formatter);
             modifiableMap.put("created_at", dateOnly);
             List<MatchEvent> matchEvents = matchEventRepository.findAllByMatchMatchId((Long) modifiableMap.get("match_id"));
+            List<Memory> matchMemories = memoryRepository.findAllByMatchMatchId((Long) modifiableMap.get("match_id"));
             MatchAttributes attributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
             List<MatchAttributesResponseEvent> matchAttributesEventList = new ArrayList<>();
+            List<MatchAttributesResponseEvent> matchAttributesMemoriesList = new ArrayList<>();
             matchEvents.forEach(matchEvent -> {
                 MatchAttributesResponseEvent event = MatchAttributesResponseEvent.builder().name(matchEvent.getName()).description(matchEvent.getDescription()).build();
                 matchAttributesEventList.add(event);
             });
+            matchMemories.forEach(matchMemory -> {
+                MatchAttributesResponseEvent memory = MatchAttributesResponseEvent.builder().name(matchMemory.getName()).description(matchMemory.getDescription()).build();
+                matchAttributesMemoriesList.add(memory);
+            });
             attributes.setEvents(matchAttributesEventList);
+            attributes.setMemories(matchAttributesMemoriesList);
             MatchAttributesResponse matchAttributesResponse = new MatchAttributesResponse(Long.parseLong(match.get("matchId").toString()), attributes);
             matchAttributeList.add(matchAttributesResponse);
         });

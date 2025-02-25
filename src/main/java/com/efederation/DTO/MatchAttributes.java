@@ -11,4 +11,5 @@ public class MatchAttributes {
     private String condition;
     private String defeatedImage;
     private List<MatchAttributesResponseEvent> events;
+    private List<MatchAttributesResponseEvent> memories;
 }
