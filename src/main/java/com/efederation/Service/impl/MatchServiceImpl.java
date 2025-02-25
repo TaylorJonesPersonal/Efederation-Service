@@ -16,12 +16,10 @@ import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.MatchService;
 import com.efederation.Utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.efederation.Containers.EventDesignators;
 import jakarta.transaction.Transactional;
-import lombok.Builder;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -76,6 +74,13 @@ public class MatchServiceImpl implements MatchService {
             WinnersLosers winnersLosers = defineWinnersLosers(combinedArray);
             String victoryCondition = defineCondition();
             Set<String> drawnEvents = matchConstants.drawEvents();
+            EventDesignators eventDesignators = EventDesignators.builder()
+                    .winner(winnersLosers.getWinner().getAnnounceName())
+                    .loser(winnersLosers.getLoser().getAnnounceName())
+                    .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
+                    .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
+                    .referee("Bart McHammond")
+                    .victoryCondition(victoryCondition).build();
             Set<MatchEvent> matchEvents = drawnEvents
                     .stream()
                     .map(event ->
@@ -83,14 +88,7 @@ public class MatchServiceImpl implements MatchService {
                                 try {
                                     return (MatchEvent) formatDescription(
                                             event,
-                                            EventDesignators
-                                                    .builder()
-                                                    .winner(winnersLosers.getWinner().getAnnounceName())
-                                                    .loser(winnersLosers.getLoser().getAnnounceName())
-                                                    .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                                    .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                                    .referee("Bart McHammond")
-                                                    .victoryCondition(victoryCondition).build(),
+                                            eventDesignators,
                                             MatchEvent.class);
                                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                                          IllegalAccessException e) {
@@ -106,15 +104,7 @@ public class MatchServiceImpl implements MatchService {
                         try {
                             return (Memory) formatDescription(
                                     event,
-                                    EventDesignators
-                                            .builder()
-                                            .winner(winnersLosers.getWinner().getAnnounceName())
-                                            .loser(winnersLosers.getLoser().getAnnounceName())
-                                            .playerCharacter(wrestlerSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                            .opponent(npcSet.stream().findFirst().orElseThrow().getAnnounceName())
-                                            .referee("Bart McHammond")
-                                            .victoryCondition(victoryCondition)
-                                            .build(),
+                                    eventDesignators,
                                     Memory.class
                             );
                         } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
@@ -161,12 +151,12 @@ public class MatchServiceImpl implements MatchService {
         matcher.appendTail(sb);
         String formattedEvent = sb.toString()
                 .split(CommonConstants.PIPE_REG_EX)[1]
-                .replaceAll(Targets.LOSER.toString(), eventDesignators.loser)
-                .replaceAll(Targets.WINNER.toString(), eventDesignators.winner)
-                .replaceAll(Targets.REF.toString(), eventDesignators.referee)
-                .replaceAll(Targets.OPPONENT.toString(), eventDesignators.opponent)
-                .replaceAll(Targets.PLAYER_CHARACTER.toString(), eventDesignators.playerCharacter)
-                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.victoryCondition);
+                .replaceAll(Targets.LOSER.toString(), eventDesignators.getLoser())
+                .replaceAll(Targets.WINNER.toString(), eventDesignators.getWinner())
+                .replaceAll(Targets.REF.toString(), eventDesignators.getReferee())
+                .replaceAll(Targets.OPPONENT.toString(), eventDesignators.getOpponent())
+                .replaceAll(Targets.PLAYER_CHARACTER.toString(), eventDesignators.getPlayerCharacter())
+                .replaceAll(Targets.VICTORY_CONDITION.toString(), eventDesignators.getVictoryCondition());
         Event newMatchEvent = designatedClass.getDeclaredConstructor().newInstance();
         newMatchEvent.setDescription(formattedEvent);
         newMatchEvent.setName(title);
@@ -205,26 +195,6 @@ public class MatchServiceImpl implements MatchService {
             matchAttributeList.add(matchAttributesResponse);
         });
         return matchAttributeList;
-    }
-
-    @Data
-    public static class EventDesignators {
-        private String winner;
-        private String loser;
-        private String referee;
-        private String opponent;
-        private String playerCharacter;
-        private String victoryCondition;
-
-        @Builder
-        public EventDesignators(String winner, String loser, String referee, String opponent, String playerCharacter, String victoryCondition) {
-            this.winner = winner;
-            this.loser = loser;
-            this.referee = referee;
-            this.opponent = opponent;
-            this.playerCharacter = playerCharacter;
-            this.victoryCondition = victoryCondition;
-        }
     }
 
     public WinnersLosers defineWinnersLosers(List<Character> characters) {
