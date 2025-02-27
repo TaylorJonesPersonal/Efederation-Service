@@ -24,11 +24,16 @@ public class NPC extends Character{
     )
     private Set<Match> matches;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="imageSetId", referencedColumnName = "id")
+    private ImageSet imageSet;
+
     @CreationTimestamp
     private Timestamp createdAt;
 
     @Builder
-    public NPC(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, byte[] imageData, byte[] defeatedImage) {
-        super(announceName, firstName, lastName, wrestlerAttributes, imageData, defeatedImage);
+    public NPC(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes, ImageSet imageSet) {
+        super(announceName, firstName, lastName, wrestlerAttributes);
+        this.imageSet = imageSet;
     }
 }

@@ -18,4 +18,5 @@ public class SubmitCharacterRequest {
     private String finishingMove;
     private float weight;
     private Attributes attributes;
+    private long imageSetId;
 }

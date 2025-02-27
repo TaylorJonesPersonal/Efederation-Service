@@ -13,5 +13,5 @@ public interface WrestlerService {
 
     void updateWrestlerJsonAttributes(long wrestlerId);
 
-    void uploadImage(WrestlerImageCreateRequest request);
+    //void uploadImage(WrestlerImageCreateRequest request);
 }

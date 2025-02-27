@@ -1,6 +1,7 @@
 package com.efederation.Constants;
 
 public class CommonConstants {
+    public static final String success = "Successful";
     public static final String fromEmail = "efedbusiness@gmail.com";
     public static String npcDenotation = "n";
     public static int LIGHT_HEAVYWEIGHT_MIN_WEIGHT = 225;

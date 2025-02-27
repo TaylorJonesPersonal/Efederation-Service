@@ -31,17 +31,22 @@ public class Wrestler extends Character {
     )
     private Set<Match> matches;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="imageSetId", referencedColumnName = "id")
+    private ImageSet imageSet;
+
     @CreationTimestamp
     private Timestamp createdAt;
 
 
     @Builder
     public Wrestler(String announceName, String firstName, String lastName, WrestlerAttributes wrestlerAttributes,
-                    byte[] imageData, byte[] defeatedImage, User user, Set<Match> matches)
+                    ImageSet imageSet, User user, Set<Match> matches)
     {
-        super(announceName, firstName, lastName, wrestlerAttributes, imageData, defeatedImage);
+        super(announceName, firstName, lastName, wrestlerAttributes);
         this.user = user;
         this.matches = matches;
+        this.imageSet = imageSet;
     }
 
 }

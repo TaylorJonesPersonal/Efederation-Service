@@ -77,10 +77,4 @@ public class WrestlerController {
         wrestlerService.updateWrestlerJsonAttributes(1);
         return ResponseEntity.ok().body("Wrestler updated!");
     }
-
-    @PostMapping(value = "/image/create", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> uploadImage(@RequestBody WrestlerImageCreateRequest imageCreateRequest) {
-        wrestlerService.uploadImage(imageCreateRequest);
-        return ResponseEntity.ok().body("Image uploaded!");
-    }
 }

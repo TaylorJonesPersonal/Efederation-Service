@@ -13,5 +13,5 @@ public interface NPCService {
 
     void updateNPCJsonAttributes(long npcId);
 
-    void uploadImage(long npcId, MultipartFile file, ImageType uploadType);
+    //void uploadImage(long npcId, MultipartFile file, ImageType uploadType);
 }
