@@ -36,14 +36,4 @@ public class NPCController {
         npcService.updateNPCJsonAttributes(1);
         return ResponseEntity.ok().body("NPC updated!");
     }
-
-    @PostMapping(value = "/image/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadImage(
-            @RequestParam("image") MultipartFile file,
-            @RequestParam("npcId") long id,
-            @RequestParam("type") ImageType uploadType
-            ) {
-        npcService.uploadImage(id, file, uploadType);
-        return ResponseEntity.ok().body("Image uploaded!");
-    }
 }

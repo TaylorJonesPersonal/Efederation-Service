@@ -5,8 +5,10 @@ import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.Enums.GenderIdentity;
 import com.efederation.Enums.ImageType;
+import com.efederation.Model.ImageSet;
 import com.efederation.Model.NPC;
 import com.efederation.Model.WrestlerAttributes;
+import com.efederation.Repository.ImageSetRepository;
 import com.efederation.Repository.NPCRepository;
 import com.efederation.Service.NPCService;
 import com.efederation.Utils.CommonUtils;
@@ -26,6 +28,9 @@ public class NPCServiceImpl implements NPCService {
     NPCRepository npcRepository;
 
     @Autowired
+    ImageSetRepository imageSetRepository;
+
+    @Autowired
     CommonUtils commonUtils;
 
     public List<NPCResponse> getNPCs() {
@@ -34,7 +39,7 @@ public class NPCServiceImpl implements NPCService {
         npcListRepository.forEach(npc -> {
             NPCResponse npcResponse = NPCResponse.builder()
                     .wrestlerId(npc.getNpc_id())
-                    .image(commonUtils.getBase64Image(npc.getImageData()))
+                    .image(commonUtils.getBase64Image(npc.getImageSet().getIdleImage()))
                     .attributes(npc.getWrestlerAttributes())
                     .announceName(npc.getAnnounceName())
                     .weightClass(commonUtils.deriveWeightClassFromWeight(npc.getWrestlerAttributes().getWeight()).toString())
@@ -45,6 +50,7 @@ public class NPCServiceImpl implements NPCService {
     }
 
     public SubmitCharacterResponse createNPC(SubmitCharacterRequest request) {
+        Optional<ImageSet> optionalImageSet = imageSetRepository.findById(request.getImageSetId());
         NPC newNpc = NPC.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -58,6 +64,7 @@ public class NPCServiceImpl implements NPCService {
                         request.getAttributes().getSpeed()
                 ))
                 .build();
+        optionalImageSet.ifPresent(newNpc::setImageSet);
         npcRepository.save(newNpc);
         return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName(), newNpc.getNpc_id());
     }
@@ -70,18 +77,4 @@ public class NPCServiceImpl implements NPCService {
             return npc;
         });
     }
-
-    //update this to use reflection to decrease the redundant code
-    public void uploadImage(long npcId, MultipartFile file, ImageType uploadType) {
-        Optional<NPC> optionalNPC = npcRepository.findById(npcId);
-            optionalNPC.map(npc -> {
-                try {
-                    npc.setImageProperty(uploadType, file.getBytes());
-                    npcRepository.save(npc);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                return npc;
-            });
-        }
 }

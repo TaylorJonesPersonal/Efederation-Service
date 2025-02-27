@@ -5,9 +5,11 @@ import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
 import com.efederation.Enums.GenderIdentity;
+import com.efederation.Model.ImageSet;
 import com.efederation.Model.User;
 import com.efederation.Model.Wrestler;
 import com.efederation.Model.WrestlerAttributes;
+import com.efederation.Repository.ImageSetRepository;
 import com.efederation.Repository.WrestlerRepository;
 import com.efederation.Service.WrestlerService;
 import com.efederation.Utils.CommonUtils;
@@ -23,6 +25,9 @@ public class WrestlerServiceImpl implements WrestlerService {
     WrestlerRepository wrestlerRepository;
 
     @Autowired
+    ImageSetRepository imageSetRepository;
+
+    @Autowired
     CommonUtils commonUtils;
 
     @Transactional
@@ -34,7 +39,7 @@ public class WrestlerServiceImpl implements WrestlerService {
                     wrestler.getWrestler_id(),
                     wrestler.getAnnounceName(),
                     wrestler.getWrestlerAttributes(),
-                    commonUtils.getBase64Image(wrestler.getImageData()),
+                    commonUtils.getBase64Image(wrestler.getImageSet().getIdleImage()),
                     commonUtils.deriveWeightClassFromWeight(wrestler.getWrestlerAttributes().getWeight()).toString()
             );
             wrestlerList.add(wrestlerResponse);
@@ -43,6 +48,7 @@ public class WrestlerServiceImpl implements WrestlerService {
     }
 
     public SubmitCharacterResponse createWrestler(User user, SubmitCharacterRequest request) {
+        Optional<ImageSet> optionalImageSet = imageSetRepository.findById(request.getImageSetId());
         Wrestler newWrestler = Wrestler.builder()
                 .user(user)
                 .announceName(request.getAnnounceName())
@@ -57,18 +63,9 @@ public class WrestlerServiceImpl implements WrestlerService {
                         request.getAttributes().getSpeed()
                         )
                 ).build();
+        optionalImageSet.ifPresent(newWrestler::setImageSet);
         wrestlerRepository.save(newWrestler);
         return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getWrestler_id());
-    }
-
-    public void uploadImage(WrestlerImageCreateRequest request) {
-        Optional<Wrestler> wrestlerOptional = wrestlerRepository.findById(request.getId());
-            wrestlerOptional.map(wrestler -> {
-                    byte[] byteArrayImage = Base64.getDecoder().decode(request.getImageBase64());
-                    wrestler.setImageProperty(request.getType(), byteArrayImage);
-                    wrestlerRepository.save(wrestler);
-                return wrestler;
-            });
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {
