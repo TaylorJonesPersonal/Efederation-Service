@@ -4,16 +4,21 @@ import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
+import com.efederation.Exception.ApiError;
+import com.efederation.Exception.ImageSetNotFoundException;
+import com.efederation.Exception.UserNotFoundException;
 import com.efederation.Model.User;
 import com.efederation.Repository.UserRepository;
 import com.efederation.Service.impl.JwtServiceImpl;
 import com.efederation.Service.WrestlerService;
 import com.efederation.Utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -36,6 +41,15 @@ public class WrestlerController {
     @Autowired
     CommonUtils commonUtils;
 
+    @ExceptionHandler({ImageSetNotFoundException.class, UserNotFoundException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleImageSetNotFoundException(
+            Exception ex,
+            WebRequest webRequest) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "An error occurred.");
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
     @GetMapping
     public ResponseEntity<List<WrestlerResponse>> getWrestlers(@RequestHeader("Authorization") String authHeader) {
         String username = jwtService.extractUsername(authHeader.replaceAll("Bearer ", ""));
@@ -45,31 +59,19 @@ public class WrestlerController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value = "/image/base64", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> getBase64(@RequestParam("image") MultipartFile file) {
-        try {
-            return ResponseEntity.ok(commonUtils.getBase64Image(file.getBytes()));
-        } catch(IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/images")
-    public ResponseEntity<List<String>> getWrestlerDefaultImages() {
-        return ResponseEntity.ok(commonUtils.generateBase64ListFromResourceFile("defaultWrestlerImages.txt", ","));
-    }
-
     @PostMapping("/create")
     public ResponseEntity<SubmitCharacterResponse> createWrestler(@RequestHeader("Authorization") String authHeader,
-                                                                  @RequestBody SubmitCharacterRequest submitCharacterRequest) {
+                                                                  @RequestBody SubmitCharacterRequest submitCharacterRequest) throws ImageSetNotFoundException, UserNotFoundException {
         String username = jwtService.extractUsername(authHeader.replaceAll("Bearer ", ""));
         Optional<User> userOptional = userRepository.findByEmail(username);
-        return userOptional
-                .map(user -> new ResponseEntity<>(
-                        wrestlerService.createWrestler(user, submitCharacterRequest),
-                        HttpStatus.CREATED)
-                )
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return new ResponseEntity<>(
+                wrestlerService.createWrestler(
+                        userOptional.orElseThrow(
+                                () -> new UserNotFoundException("User not found")
+                        ), submitCharacterRequest
+                ),
+                HttpStatus.CREATED
+        );
     }
 
     @PostMapping(value= "/update", consumes={MediaType.APPLICATION_JSON_VALUE})

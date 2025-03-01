@@ -36,9 +36,8 @@ public class Wrestler extends Character {
     )
     private Set<Match> matches;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="imageSetId", referencedColumnName = "id")
-    @ToString.Exclude
     private ImageSet imageSet;
 
     @CreationTimestamp
