@@ -1,7 +1,12 @@
 package com.efederation.Model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -33,6 +38,7 @@ public class Wrestler extends Character {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="imageSetId", referencedColumnName = "id")
+    @ToString.Exclude
     private ImageSet imageSet;
 
     @CreationTimestamp
