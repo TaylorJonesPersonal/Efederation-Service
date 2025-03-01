@@ -33,7 +33,7 @@ public class ImageSet {
     private String setName;
 
     @Lob
-    @giColumn(name = "idleImage")
+    @Column(name = "idleImage")
     private byte[] idleImage;
 
     @Lob
