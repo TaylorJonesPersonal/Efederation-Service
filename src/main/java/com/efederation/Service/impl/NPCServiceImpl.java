@@ -5,6 +5,7 @@ import com.efederation.DTO.SubmitCharacterRequest;
 import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.Enums.GenderIdentity;
 import com.efederation.Enums.ImageType;
+import com.efederation.Exception.ImageSetNotFoundException;
 import com.efederation.Model.ImageSet;
 import com.efederation.Model.NPC;
 import com.efederation.Model.WrestlerAttributes;
@@ -49,8 +50,17 @@ public class NPCServiceImpl implements NPCService {
         return npcList;
     }
 
-    public SubmitCharacterResponse createNPC(SubmitCharacterRequest request) {
-        Optional<ImageSet> optionalImageSet = imageSetRepository.findById(request.getImageSetId());
+    /**
+     * Should deprecate this and roll these interactions into one Character create as this and wrestler create are duplicative
+     * @param request
+     * @return
+     * @throws ImageSetNotFoundException
+     * @deprecated
+     */
+    public SubmitCharacterResponse createNPC(SubmitCharacterRequest request) throws ImageSetNotFoundException {
+        ImageSet imageSet = imageSetRepository
+                .findById(request.getImageSetId())
+                .orElseThrow(() -> new ImageSetNotFoundException("No matching image set"));
         NPC newNpc = NPC.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -64,7 +74,7 @@ public class NPCServiceImpl implements NPCService {
                         request.getAttributes().getSpeed()
                 ))
                 .build();
-        optionalImageSet.ifPresent(newNpc::setImageSet);
+        newNpc.setImageSet(imageSet);
         npcRepository.save(newNpc);
         return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName(), newNpc.getNpc_id());
     }

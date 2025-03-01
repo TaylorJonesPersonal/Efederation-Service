@@ -175,8 +175,10 @@ public class MatchServiceImpl implements MatchService {
                     modifiableMap.put("participants", String.format(CommonConstants.PARTICIPANT_VS, wrestler.getAnnounceName(), npc.getAnnounceName()));
                     if(Objects.equals(npc.getAnnounceName(), modifiableMap.get("winner").toString())) {
                         modifiableMap.put("defeatedImage", wrestler.getImageSet().getDefeatedImage());
+                        modifiableMap.put("actionImages", npc.getImageSet().getAttackFrames());
                     } else {
                         modifiableMap.put("defeatedImage", npc.getImageSet().getDefeatedImage());
+                        modifiableMap.put("actionImages", wrestler.getImageSet().getAttackFrames());
                     }
                 }
             ));

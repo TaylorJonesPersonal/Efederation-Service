@@ -10,6 +10,7 @@ public class MatchAttributes {
     private String winner;
     private String condition;
     private String defeatedImage;
+    private List<String> actionImages;
     private List<MatchAttributesResponseEvent> events;
     private List<MatchAttributesResponseEvent> memories;
 }

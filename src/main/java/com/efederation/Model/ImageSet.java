@@ -1,8 +1,14 @@
 package com.efederation.Model;
 
+import com.efederation.Utils.CommonUtils;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Builder;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a character entity's set of images represented in db blob form.
  */
@@ -55,5 +61,15 @@ public class ImageSet {
     @Lob
     @Column(name = "attackFrame4")
     private byte[] attackFrame4;
+
+    public List<String> getAttackFrames() {
+        CommonUtils commonUtils = new CommonUtils();
+        List<String> attackFrames = new ArrayList<>();
+        attackFrames.add(commonUtils.getBase64Image(this.attackFrame1));
+        attackFrames.add(commonUtils.getBase64Image(this.attackFrame2));
+        attackFrames.add(commonUtils.getBase64Image(this.attackFrame3));
+        attackFrames.add(commonUtils.getBase64Image(this.attackFrame4));
+        return attackFrames;
+    }
 
 }
