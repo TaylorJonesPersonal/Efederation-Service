@@ -5,6 +5,7 @@ import com.efederation.DTO.SubmitCharacterResponse;
 import com.efederation.DTO.WrestlerImageCreateRequest;
 import com.efederation.DTO.WrestlerResponse;
 import com.efederation.Enums.GenderIdentity;
+import com.efederation.Exception.ImageSetNotFoundException;
 import com.efederation.Model.ImageSet;
 import com.efederation.Model.User;
 import com.efederation.Model.Wrestler;
@@ -47,8 +48,10 @@ public class WrestlerServiceImpl implements WrestlerService {
         return wrestlerList;
     }
 
-    public SubmitCharacterResponse createWrestler(User user, SubmitCharacterRequest request) {
-        Optional<ImageSet> optionalImageSet = imageSetRepository.findById(request.getImageSetId());
+    public SubmitCharacterResponse createWrestler(User user, SubmitCharacterRequest request) throws ImageSetNotFoundException {
+        ImageSet imageSet = imageSetRepository
+                .findById(request.getImageSetId())
+                .orElseThrow(() -> new ImageSetNotFoundException("No matching image set"));
         Wrestler newWrestler = Wrestler.builder()
                 .user(user)
                 .announceName(request.getAnnounceName())
@@ -63,7 +66,7 @@ public class WrestlerServiceImpl implements WrestlerService {
                         request.getAttributes().getSpeed()
                         )
                 ).build();
-        optionalImageSet.ifPresent(newWrestler::setImageSet);
+        newWrestler.setImageSet(imageSet);
         wrestlerRepository.save(newWrestler);
         return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getWrestler_id());
     }
