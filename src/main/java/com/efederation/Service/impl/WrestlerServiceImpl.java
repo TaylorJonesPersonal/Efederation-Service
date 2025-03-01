@@ -48,6 +48,14 @@ public class WrestlerServiceImpl implements WrestlerService {
         return wrestlerList;
     }
 
+    /**
+     * Should deprecate this and roll these interactions into one Character create as this and NPC create are duplicative
+     * @param user
+     * @param request
+     * @return
+     * @throws ImageSetNotFoundException
+     * @deprecated
+     */
     public SubmitCharacterResponse createWrestler(User user, SubmitCharacterRequest request) throws ImageSetNotFoundException {
         ImageSet imageSet = imageSetRepository
                 .findById(request.getImageSetId())
