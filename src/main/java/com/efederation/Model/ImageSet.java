@@ -1,50 +1,22 @@
 package com.efederation.Model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Builder;
 /**
  * Represents a character entity's set of images represented in db blob form.
  */
 @Entity
-@Getter
-@Setter
+@Data
 public class ImageSet {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    private String setName;
-
-    @Lob
-    private byte[] idleImage;
-
-    @Lob
-    private byte[] defeatedImage;
-
-    @Lob
-    private byte[] attackFrame1;
-
-    @Lob
-    private byte[] attackFrame2;
-
-    @Lob
-    private byte[] attackFrame3;
-
-    @Lob
-    private byte[] attackFrame4;
-
-    public ImageSet() {
+    public ImageSet () {
         super();
     }
 
     @Builder
     public ImageSet(String setName, byte[] idleImage, byte[] defeatedImage, byte[] attackFrame1,
-                    byte [] attackFrame2, byte[] attackFrame3, byte [] attackFrame4) {
+                    byte [] attackFrame2, byte[] attackFrame3, byte[] attackFrame4) {
         this.setName = setName;
         this.idleImage = idleImage;
         this.defeatedImage = defeatedImage;
@@ -53,4 +25,35 @@ public class ImageSet {
         this.attackFrame3 = attackFrame3;
         this.attackFrame4 = attackFrame4;
     }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    private String setName;
+
+    @Lob
+    @giColumn(name = "idleImage")
+    private byte[] idleImage;
+
+    @Lob
+    @Column(name = "defeatedImage")
+    private byte[] defeatedImage;
+
+    @Lob
+    @Column(name = "attackFrame1")
+    private byte[] attackFrame1;
+
+    @Lob
+    @Column(name = "attackFrame2")
+    private byte[] attackFrame2;
+
+    @Lob
+    @Column(name = "attackFrame3")
+    private byte[] attackFrame3;
+
+    @Lob
+    @Column(name = "attackFrame4")
+    private byte[] attackFrame4;
+
 }
