@@ -1,6 +1,7 @@
 package com.efederation.Controller;
 
 import com.efederation.DTO.ImageSetCreateRequest;
+import com.efederation.DTO.ImageSetResponse;
 import com.efederation.Exception.ApiError;
 import com.efederation.Service.ImageSetService;
 import com.efederation.Utils.CommonUtils;
@@ -36,7 +37,7 @@ public class ImageSetController {
     }
 
     @GetMapping(value = "/v1")
-    public ResponseEntity<List<String>> getAllIdleImages() {
+    public ResponseEntity<List<ImageSetResponse>> getAllIdleImages() {
         return ResponseEntity.ok(imageSetService.getIdleListBase64());
     }
 
