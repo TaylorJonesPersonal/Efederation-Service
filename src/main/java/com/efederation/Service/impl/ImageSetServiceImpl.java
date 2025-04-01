@@ -2,6 +2,7 @@ package com.efederation.Service.impl;
 
 import com.efederation.Constants.CommonConstants;
 import com.efederation.DTO.ImageSetCreateRequest;
+import com.efederation.DTO.ImageSetResponse;
 import com.efederation.Model.ImageSet;
 import com.efederation.Repository.ImageSetRepository;
 import com.efederation.Service.ImageSetService;
@@ -11,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ImageSetServiceImpl implements ImageSetService {
@@ -24,13 +23,18 @@ public class ImageSetServiceImpl implements ImageSetService {
     @Autowired
     CommonUtils commonUtils;
 
-    public List<String> getIdleListBase64() {
+    public List<ImageSetResponse> getIdleListBase64() {
         List<ImageSet> imageSets = imageSetRepository.findAll();
-        List<String> idleBase64Strings = new ArrayList<>();
+        List<ImageSetResponse> setResponse = new ArrayList<>();
         for(ImageSet set : imageSets) {
-            idleBase64Strings.add(commonUtils.getBase64Image(set.getIdleImage()));
+            setResponse.add(
+                    ImageSetResponse
+                            .builder()
+                            .id((int) set.getId())
+                            .base64Image(commonUtils.getBase64Image(set.getIdleImage()))
+                            .build());
         }
-        return idleBase64Strings;
+        return setResponse;
     }
     public String createImageSet(ImageSetCreateRequest request) throws IOException {
         ImageSet newImageSet = ImageSet
