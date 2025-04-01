@@ -30,3 +30,5 @@ script:
 
 before_install:
   - chmod +x mvnw
+  - gem install nokogiri
+  - gem install logger
