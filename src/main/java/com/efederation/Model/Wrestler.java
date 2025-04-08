@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -35,6 +36,13 @@ public class Wrestler extends Character {
             inverseJoinColumns = @JoinColumn(name="matchId")
     )
     private Set<Match> matches;
+
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name="wrestler_id"),
+            inverseJoinColumns = @JoinColumn(name="show_id")
+    )
+    private Set<Show> showsInvolvedIn = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="imageSetId", referencedColumnName = "id")
