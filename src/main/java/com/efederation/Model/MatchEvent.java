@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-@ToString
 @EqualsAndHashCode(callSuper = true)
 public class MatchEvent extends Event {
 
