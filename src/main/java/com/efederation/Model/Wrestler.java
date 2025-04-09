@@ -10,38 +10,30 @@ import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name="WRESTLERS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 public class Wrestler extends Character {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long wrestler_id;
+    private long id;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name="wrestler_id"),
-            inverseJoinColumns = @JoinColumn(name="matchId")
-    )
+    @ManyToMany(mappedBy = "human_participants")
     private Set<Match> matches;
 
-    @ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name="wrestler_id"),
-            inverseJoinColumns = @JoinColumn(name="show_id")
-    )
+    @ManyToMany(mappedBy = "wrestlersContracted")
     private Set<Show> showsInvolvedIn = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -60,6 +52,21 @@ public class Wrestler extends Character {
         this.user = user;
         this.matches = matches;
         this.imageSet = imageSet;
+    }
+
+    public boolean equals(Object object) {
+        boolean result = false;
+        if(object == null || object.getClass() != getClass()) {
+            return result;
+        }
+        Wrestler comparison = (Wrestler) object;
+        if(comparison.getId() == this.getId()
+                && Objects.equals(comparison.getAnnounceName(), this.getAnnounceName())
+                && Objects.equals(comparison.getLastName(), this.getLastName())
+        ) {
+            result = true;
+        }
+        return result;
     }
 
 }

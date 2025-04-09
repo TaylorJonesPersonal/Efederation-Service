@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
-@Table(name="NPC")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,14 +18,13 @@ import java.util.Set;
 public class NPC extends Character{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long npc_id;
+    private long id;
 
-    @ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name="npc_id"),
-            inverseJoinColumns = @JoinColumn(name="matchId")
-    )
+    @ManyToMany(mappedBy = "npc_participants")
     private Set<Match> matches;
+
+    @ManyToMany(mappedBy = "npcsContracted")
+    private Set<Show> showsInvolvedIn;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="imageSetId", referencedColumnName = "id")

@@ -167,9 +167,12 @@ public class MatchServiceImpl implements MatchService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonConstants.STD_DATE_FORMAT);
         List<Map<String, Object>> matches = matchRepository.getMatchesByWrestlerId(wrestlerId);
         List<MatchAttributesResponse> matchAttributeList = new ArrayList<>();
+        if(matches.isEmpty()) {
+            return matchAttributeList;
+        }
         matches.forEach(match -> {
             Map<String, Object> modifiableMap = new HashMap<>(match);
-            Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_participants_npc_id"));
+            Optional<NPC> optionalNPC = npcRepository.findById((Long) modifiableMap.get("npc_id"));
             Optional<Wrestler> optionalWrestler = wrestlerRepository.findById((long) wrestlerId);
             optionalWrestler.ifPresent(wrestler -> optionalNPC.ifPresent(npc -> {
                     modifiableMap.put("participants", String.format(CommonConstants.PARTICIPANT_VS, wrestler.getAnnounceName(), npc.getAnnounceName()));
@@ -185,8 +188,8 @@ public class MatchServiceImpl implements MatchService {
             LocalDateTime timestamp = commonUtils.convertTimestampWithoutExplicitT(modifiableMap.get("created_at").toString());
             String dateOnly = timestamp.format(formatter);
             modifiableMap.put("created_at", dateOnly);
-            List<MatchEvent> matchEvents = matchEventRepository.findAllByMatchMatchId((Long) modifiableMap.get("match_id"));
-            List<Memory> matchMemories = memoryRepository.findAllByMatchMatchId((Long) modifiableMap.get("match_id"));
+            List<MatchEvent> matchEvents = matchEventRepository.findAllByMatchId((Long) modifiableMap.get("match_id"));
+            List<Memory> matchMemories = memoryRepository.findAllByMatchId((Long) modifiableMap.get("match_id"));
             MatchAttributes attributes = objectMapper.convertValue(modifiableMap, MatchAttributes.class);
             List<MatchAttributesResponseEvent> matchAttributesEventList = new ArrayList<>();
             List<MatchAttributesResponseEvent> matchAttributesMemoriesList = new ArrayList<>();

@@ -14,9 +14,9 @@ import java.util.Set;
 
 @Data
 @Entity
+@Table(name="users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="USERS")
 @Builder
 
 public class User implements UserDetails {

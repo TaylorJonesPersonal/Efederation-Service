@@ -37,7 +37,7 @@ public class WrestlerServiceImpl implements WrestlerService {
         List<WrestlerResponse> wrestlerList = new ArrayList<>();
         userWrestlers.forEach(wrestler -> {
             WrestlerResponse wrestlerResponse = new WrestlerResponse(
-                    wrestler.getWrestler_id(),
+                    wrestler.getId(),
                     wrestler.getAnnounceName(),
                     wrestler.getWrestlerAttributes(),
                     commonUtils.getBase64Image(wrestler.getImageSet().getIdleImage()),
@@ -76,7 +76,7 @@ public class WrestlerServiceImpl implements WrestlerService {
                 ).build();
         newWrestler.setImageSet(imageSet);
         wrestlerRepository.save(newWrestler);
-        return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getWrestler_id());
+        return new SubmitCharacterResponse("Successful", newWrestler.getAnnounceName(), newWrestler.getId());
     }
 
     public void updateWrestlerJsonAttributes(long wrestlerId) {

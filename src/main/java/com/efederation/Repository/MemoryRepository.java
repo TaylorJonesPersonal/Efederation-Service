@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MemoryRepository extends JpaRepository<Memory, Long> {
-    List<Memory> findAllByMatchMatchId(long matchId);
+    List<Memory> findAllByMatchId(long matchId);
 }
