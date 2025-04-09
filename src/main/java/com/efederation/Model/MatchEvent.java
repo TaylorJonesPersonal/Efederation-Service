@@ -16,7 +16,7 @@ public class MatchEvent extends Event {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name="matchId", nullable = false)
+    @JoinColumn(name="match_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Match match;

@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Match")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,14 +16,25 @@ import java.util.Set;
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long matchId;
+    private long id;
+
 
     @ManyToMany
+    @JoinTable(
+            name = "wrestler_match",
+            joinColumns = @JoinColumn(name="match_id"),
+            inverseJoinColumns = @JoinColumn(name="wrestler_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Wrestler> human_participants;
 
     @ManyToMany
+    @JoinTable(
+            name="npc_match",
+            joinColumns = @JoinColumn(name="match_id"),
+            inverseJoinColumns = @JoinColumn(name="npc_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<NPC> npc_participants;

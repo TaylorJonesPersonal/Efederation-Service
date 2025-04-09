@@ -39,7 +39,7 @@ public class NPCServiceImpl implements NPCService {
         List<NPCResponse> npcList = new ArrayList<>();
         npcListRepository.forEach(npc -> {
             NPCResponse npcResponse = NPCResponse.builder()
-                    .wrestlerId(npc.getNpc_id())
+                    .wrestlerId(npc.getId())
                     .image(commonUtils.getBase64Image(npc.getImageSet().getIdleImage()))
                     .attributes(npc.getWrestlerAttributes())
                     .announceName(npc.getAnnounceName())
@@ -76,7 +76,7 @@ public class NPCServiceImpl implements NPCService {
                 .build();
         newNpc.setImageSet(imageSet);
         npcRepository.save(newNpc);
-        return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName(), newNpc.getNpc_id());
+        return new SubmitCharacterResponse("Successful", newNpc.getAnnounceName(), newNpc.getId());
     }
 
     public void updateNPCJsonAttributes(long npcId) {

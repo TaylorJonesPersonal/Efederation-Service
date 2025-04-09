@@ -10,7 +10,6 @@ import java.util.Set;
 @Entity
 public class Show {
     @Id
-    @Column(name="show_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -23,8 +22,21 @@ public class Show {
     @Column(name = "default_image")
     private byte[] defaultImage;
 
-    @ManyToMany(mappedBy = "showsInvolvedIn")
+    @ManyToMany
+    @JoinTable(
+            name = "wrestler_show",
+            joinColumns = @JoinColumn(name="wrestler_id"),
+            inverseJoinColumns = @JoinColumn(name="show_id")
+    )
     private Set<Wrestler> wrestlersContracted = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name="npc_show",
+            joinColumns = @JoinColumn(name="show_id"),
+            inverseJoinColumns = @JoinColumn(name="npc_id")
+    )
+    private Set<NPC> npcsContracted = new HashSet<>();
 
 
     @Builder
@@ -32,6 +44,10 @@ public class Show {
         this.name = name;
         this.importance = importance;
         this.defaultImage = defaultImage;
+    }
+
+    public Show() {
+        super();
     }
 
     public long getId() {
@@ -64,5 +80,21 @@ public class Show {
 
     public void setDefaultImage(byte[] defaultImage) {
         this.defaultImage = defaultImage;
+    }
+
+    public Set<Wrestler> getWrestlersContracted() {
+        return this.wrestlersContracted;
+    }
+
+    public void setWrestlersContracted(Set<Wrestler> wrestlersContracted) {
+        this.wrestlersContracted = wrestlersContracted;
+    }
+
+    public Set<NPC> getNpcsContracted() {
+        return this.npcsContracted;
+    }
+
+    public void setNpcsContracted(Set<NPC> npcsContracted) {
+        this.npcsContracted = npcsContracted;
     }
 }

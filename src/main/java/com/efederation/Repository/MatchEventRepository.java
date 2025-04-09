@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MatchEventRepository extends JpaRepository<MatchEvent, Long> {
-    List<MatchEvent> findAllByMatchMatchId(long matchId);
+    List<MatchEvent> findAllByMatchId(long matchId);
 }
