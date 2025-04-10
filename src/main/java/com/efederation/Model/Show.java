@@ -22,6 +22,10 @@ public class Show {
     @Column(name = "default_image")
     private byte[] defaultImage;
 
+    @Lob
+    @Column(name = "logo_image")
+    private byte[] logoImage;
+
     @ManyToMany
     @JoinTable(
             name = "wrestler_show",
@@ -40,10 +44,11 @@ public class Show {
 
 
     @Builder
-    public Show(String name, Importance importance, byte[] defaultImage) {
+    public Show(String name, Importance importance, byte[] defaultImage, byte[] logoImage) {
         this.name = name;
         this.importance = importance;
         this.defaultImage = defaultImage;
+        this.logoImage = logoImage;
     }
 
     public Show() {
@@ -81,6 +86,10 @@ public class Show {
     public void setDefaultImage(byte[] defaultImage) {
         this.defaultImage = defaultImage;
     }
+
+    public byte[] getLogoImage() {return this.logoImage;}
+
+    public void setLogoImage(byte[] logoImage) {this.logoImage = logoImage;}
 
     public Set<Wrestler> getWrestlersContracted() {
         return this.wrestlersContracted;
