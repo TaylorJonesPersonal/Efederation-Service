@@ -8,4 +8,5 @@ public class CreateShowRequest {
     private String name;
     private String importance;
     private MultipartFile image;
+    private MultipartFile logo;
 }

@@ -10,4 +10,5 @@ public class ShowResponse {
     private String name;
     private String importance;
     private String default_image;
+    private String logo;
 }

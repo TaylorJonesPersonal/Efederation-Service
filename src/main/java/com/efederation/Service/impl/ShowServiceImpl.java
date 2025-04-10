@@ -58,6 +58,7 @@ public class ShowServiceImpl implements ShowService {
                     .id(show.getId())
                     .name(show.getName())
                     .default_image(commonUtils.getBase64Image(show.getDefaultImage()))
+                    .logo(commonUtils.getBase64Image(show.getLogoImage()))
                     .importance(String.valueOf(show.getImportance()))
                     .build();
             showResponses.add(newShowResponse);
@@ -73,6 +74,7 @@ public class ShowServiceImpl implements ShowService {
                 .builder()
                 .name(request.getName())
                 .defaultImage(request.getImage().getBytes())
+                .logoImage(request.getLogo().getBytes())
                 .importance(Importance.valueOf(request.getImportance()))
                 .build();
         showRepository.save(newShow);
