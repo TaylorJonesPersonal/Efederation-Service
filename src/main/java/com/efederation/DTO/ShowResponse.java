@@ -9,6 +9,6 @@ public class ShowResponse {
     private long id;
     private String name;
     private String importance;
-    private String default_image;
+    private String defaultImage;
     private String logo;
 }

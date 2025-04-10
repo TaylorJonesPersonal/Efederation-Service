@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -57,7 +56,7 @@ public class ShowServiceImpl implements ShowService {
                     .builder()
                     .id(show.getId())
                     .name(show.getName())
-                    .default_image(commonUtils.getBase64Image(show.getDefaultImage()))
+                    .defaultImage(commonUtils.getBase64Image(show.getDefaultImage()))
                     .logo(commonUtils.getBase64Image(show.getLogoImage()))
                     .importance(String.valueOf(show.getImportance()))
                     .build();
