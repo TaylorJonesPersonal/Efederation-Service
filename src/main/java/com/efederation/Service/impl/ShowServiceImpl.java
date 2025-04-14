@@ -4,6 +4,7 @@ import com.efederation.DTO.AddCharacterToShowRequest;
 import com.efederation.DTO.ApiResponse;
 import com.efederation.DTO.CreateShowRequest;
 import com.efederation.DTO.ShowResponse;
+import com.efederation.Enums.Day;
 import com.efederation.Enums.Importance;
 import com.efederation.Exception.NoCharacterFoundException;
 import com.efederation.Exception.ShowContainsCharacterException;
@@ -59,6 +60,7 @@ public class ShowServiceImpl implements ShowService {
                     .defaultImage(commonUtils.getBase64Image(show.getDefaultImage()))
                     .logo(commonUtils.getBase64Image(show.getLogoImage()))
                     .importance(String.valueOf(show.getImportance()))
+                    .day(String.valueOf(show.getDay()))
                     .build();
             showResponses.add(newShowResponse);
         }
@@ -72,6 +74,7 @@ public class ShowServiceImpl implements ShowService {
         Show newShow = Show
                 .builder()
                 .name(request.getName())
+                .day(Day.valueOf(request.getDay()))
                 .defaultImage(request.getImage().getBytes())
                 .logoImage(request.getLogo().getBytes())
                 .importance(Importance.valueOf(request.getImportance()))
