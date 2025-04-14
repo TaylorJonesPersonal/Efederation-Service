@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ShowRepository extends JpaRepository<Show, Long> {
-    @Query(value = "select id, name, importance, default_image, logo_image from wrestler_show ws inner join show sh on ws.show_id = sh.id where ws.wrestler_id = :id", nativeQuery = true)
+    @Query(value = "select id, name, importance, day, default_image, logo_image from wrestler_show ws inner join show sh on ws.show_id = sh.id where ws.wrestler_id = :id", nativeQuery = true)
     List<Show> getShowsByWrestlerId(@Param("id") int id);
 }
 

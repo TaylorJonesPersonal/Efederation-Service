@@ -1,5 +1,6 @@
 package com.efederation.Model;
 
+import com.efederation.Enums.Day;
 import com.efederation.Enums.Importance;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -16,6 +17,9 @@ public class Show {
     private String name;
 
     @Enumerated(EnumType.STRING)
+    private Day day;
+
+    @Enumerated(EnumType.STRING)
     private Importance importance;
 
     @Lob
@@ -29,8 +33,8 @@ public class Show {
     @ManyToMany
     @JoinTable(
             name = "wrestler_show",
-            joinColumns = @JoinColumn(name="wrestler_id"),
-            inverseJoinColumns = @JoinColumn(name="show_id")
+            joinColumns = @JoinColumn(name="show_id"),
+            inverseJoinColumns = @JoinColumn(name="wrestler_id")
     )
     private Set<Wrestler> wrestlersContracted = new HashSet<>();
 
@@ -44,8 +48,9 @@ public class Show {
 
 
     @Builder
-    public Show(String name, Importance importance, byte[] defaultImage, byte[] logoImage) {
+    public Show(String name, Day day, Importance importance, byte[] defaultImage, byte[] logoImage) {
         this.name = name;
+        this.day = day;
         this.importance = importance;
         this.defaultImage = defaultImage;
         this.logoImage = logoImage;
@@ -69,6 +74,12 @@ public class Show {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Day getDay() {return this.day; }
+
+    public void setDay(Day day) {
+        this.day = day;
     }
 
     public Importance getImportance() {
