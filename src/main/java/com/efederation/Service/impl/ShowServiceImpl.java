@@ -48,12 +48,12 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Transactional
-    public ApiResponse<List<ShowResponse>> getShowsByCharacterId(String id) {
+    public ApiResponse<ShowResponse> getShowsByCharacterId(String id) {
         List<Show> shows = showRepository.getShowsByWrestlerId(Integer.parseInt(id));
-        List<ShowResponse> showResponses = new ArrayList<>();
-        ApiResponse<List<ShowResponse>> response = new ApiResponse<>();
+        List<ShowResponse.ShowData> showData = new ArrayList<>();
+        ApiResponse<ShowResponse> response = new ApiResponse<>();
         for(Show show : shows) {
-            ShowResponse newShowResponse = ShowResponse
+            ShowResponse.ShowData newShowResponse = ShowResponse.ShowData
                     .builder()
                     .id(show.getId())
                     .name(show.getName())
@@ -62,10 +62,10 @@ public class ShowServiceImpl implements ShowService {
                     .importance(String.valueOf(show.getImportance()))
                     .day(String.valueOf(show.getDay()))
                     .build();
-            showResponses.add(newShowResponse);
+            showData.add(newShowResponse);
         }
         response.setMessage("Successfully retrieved shows");
-        response.setData(showResponses);
+        response.setData(ShowResponse.builder().wrestlerId(Integer.parseInt(id)).data(showData).build());
         response.setStatus(HttpStatus.OK.toString());
         return response;
     }
