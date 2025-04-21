@@ -65,7 +65,7 @@ public class ShowServiceImpl implements ShowService {
             showData.add(newShowResponse);
         }
         response.setMessage("Successfully retrieved shows");
-        response.setData(ShowResponse.builder().wrestlerId(Integer.parseInt(id)).data(showData).build());
+        response.setData(ShowResponse.builder().wrestlerId(Integer.parseInt(id)).shows(showData).build());
         response.setStatus(HttpStatus.OK.toString());
         return response;
     }
