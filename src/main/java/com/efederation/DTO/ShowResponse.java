@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class ShowResponse {
     private long wrestlerId;
-    private List<ShowData> data;
+    private List<ShowData> shows;
 
     @Data
     @Builder
