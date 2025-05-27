@@ -33,7 +33,8 @@ public class SecurityConfiguration {
                                 "/api/v1/npc/create",
                                 "/api/v1/npc/update",
                                 "/api/show/v1/create",
-                                "/api/imageset/**"
+                                "/api/imageset/**",
+                                "/api/node/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
