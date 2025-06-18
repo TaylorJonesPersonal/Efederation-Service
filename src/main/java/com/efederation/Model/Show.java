@@ -4,6 +4,7 @@ import com.efederation.Enums.Day;
 import com.efederation.Enums.Importance;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class Show {
     @Column(name = "logo_image")
     private byte[] logoImage;
 
+    @ToString.Exclude
     @ManyToMany
     @JoinTable(
             name = "wrestler_show",
@@ -38,6 +40,7 @@ public class Show {
     )
     private Set<Wrestler> wrestlersContracted = new HashSet<>();
 
+    @ToString.Exclude
     @ManyToMany
     @JoinTable(
             name="npc_show",
